@@ -6,6 +6,9 @@ export default {
       colors: {
         background: "hsl(var(--background) /<alpha-value>)",
         foreground: "hsl(var(--foreground) /<alpha-value>)",
+        orangepale : "hsl(var(--clr-orangepale))",
+        warmrasberry : "hsl(var(--clr-warmraspberry))",
+        thistlepink : "hsl(var(--clr-ThistlePink))",
       },
       textColor: {
         background: "hsl(var(--background) /<alpha-value>)",

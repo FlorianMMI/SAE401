@@ -10,7 +10,11 @@ export default function Root() {
     <>
     <NavBar />
     <section>
-      <Outlet />
+      <Outlet 
+      
+      
+      
+      />
     </section>
     <Footer />
 
