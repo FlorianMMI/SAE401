@@ -4,7 +4,9 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 
 import Root from './routes/root.tsx';
-import Home from './routes/home.tsx';
+import Home, {loader as PostLoader} from './routes/home.tsx';
+import Login from './routes/login.tsx';
+import Signup from './routes/signup.tsx';
 
 
 import './index.css';
@@ -17,7 +19,16 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <Home />
+        element: <Home />,
+        loader: PostLoader, 
+      },
+      {
+        path: '/login',
+        element: <Login />,
+      },
+      {
+        path: '/signup',
+        element: <Signup />,
       }
     ]
   },

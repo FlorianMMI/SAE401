@@ -18,10 +18,16 @@
     --clr-orangepale: 13 44% 77%;
     --clr-warmraspberry: 329 20% 43%;
     --clr-ThistlePink : 294 43% 81%;
+    --clr-candyPink: 342 96% 89%;
+    
     
 
 
     
     
+  }
+
+  body{
+    margin: 0;
   }
 }

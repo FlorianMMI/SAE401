@@ -11,9 +11,7 @@ export default function Root() {
     <NavBar />
     <section>
       <Outlet 
-      
-      
-      
+
       />
     </section>
     <Footer />
