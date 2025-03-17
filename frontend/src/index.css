@@ -1,6 +1,14 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+
+@theme {
+
+  --color-orangepale: hsl(13, 44%, 77%);
+  --color-warmrasberry: hsl(329, 20%, 43%);
+  --color-thistlepink: hsl(294, 43%, 81%);
+  --color-candypink: hsl(342, 96%, 89%);
+
+}
 
 @layer base {
   :root {
@@ -15,11 +23,6 @@
     --gap: 1rem;
 
 
-    --clr-orangepale: 13 44% 77%;
-    --clr-warmraspberry: 329 20% 43%;
-    --clr-ThistlePink : 294 43% 81%;
-    --clr-candyPink: 342 96% 89%;
-    
     
 
 
