@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Button from "../../ui/button"
 
 
 export default function Card_Post() {
@@ -35,9 +36,9 @@ export default function Card_Post() {
                     </div>
                     {error && <p className="text-warmrasberry text-sm">{error}</p>}
                     <div>
-                        <button className="bg-warmrasberry rounded px-7 py-2 text-lg text-white">
+                        <Button variant="primary" type="submit">
                             Post
-                        </button>
+                        </Button>
                     </div>
                 </form>
             </section>

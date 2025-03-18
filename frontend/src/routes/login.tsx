@@ -5,7 +5,7 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
-
+import Button from '../ui/button';
 
 
 export default function login() {
@@ -23,19 +23,19 @@ export default function login() {
         <input id="password" type="password" className="w-full px-4 py-3 border border-warmrasberry rounded" />
           </div>
           <div className="flex items-center justify-between gap-4">
-        <button
-          type="submit"
-          className="bg-warmrasberry text-white py-3 px-6 rounded transition-colors duration-300 border border-warmrasberry hover:bg-white hover:text-warmrasberry"
+        <Button
+          variant='primary'
+          type='submit'
         >
           Connexion
-        </button>
+        </Button>
         <Link to="/signup">
-          <button
+          <Button
             type="button"
-            className="bg-transparent border border-warmrasberry text-warmrasberry py-3 px-6 rounded transition-colors duration-300 hover:bg-warmrasberry hover:text-white"
+            variant='secondary'
           >
             S'inscrire ?
-          </button>
+          </Button>
         </Link>
           </div>
         </form>

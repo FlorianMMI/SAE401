@@ -14,8 +14,7 @@ class Post
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 80)]
-    private ?string $user = null;
+    
 
     #[ORM\Column(length: 280)]
     private ?string $message = null;
@@ -31,18 +30,6 @@ class Post
     public function setId(int $id): static
     {
         $this->id = $id;
-
-        return $this;
-    }
-
-    public function getUser(): ?string
-    {
-        return $this->user;
-    }
-
-    public function setUser(string $user): static
-    {
-        $this->user = $user;
 
         return $this;
     }

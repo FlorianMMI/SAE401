@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Button from '../ui/button';
 
 export default function signup() {
   const [password, setPassword] = React.useState('');
@@ -89,19 +90,19 @@ export default function signup() {
             <div className="mt-2 h-2 bg-warmrasberry rounded-full"></div>
           </div>
           <div className="flex items-center justify-between gap-4">
-            <button
+            <Button
               type="submit"
-              className="bg-warmrasberry text-white py-3 px-6 rounded transition-colors duration-300 border border-warmrasberry hover:bg-white hover:text-warmrasberry"
+              variant="primary"
             >
               S'inscrire
-            </button>
+            </Button>
             <Link to="/login">
-                <a
+                <Button
                   type="button"
-                  className="bg-transparent border border-warmrasberry text-warmrasberry py-3 px-6 rounded transition-colors duration-300 hover:bg-warmrasberry hover:text-white"
+                  variant='secondary'
                 >
                   Déjà un compte ?
-                </a>
+                </Button>
             </Link>
           </div>
         </form>
