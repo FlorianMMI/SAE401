@@ -23,8 +23,20 @@ export default function login() {
         <input id="password" type="password" className="w-full px-4 py-3 border border-warmrasberry rounded" />
           </div>
           <div className="flex items-center justify-between gap-4">
-        <button type="submit" className="bg-warmrasberry text-white py-3 px-6 rounded">Connexion</button>
-        <Link to="/signup"><button type="button" className="bg-transparent border border-warmrasberry text-warmrasberry py-3 px-6 rounded">S'inscrire ?</button></Link>
+        <button
+          type="submit"
+          className="bg-warmrasberry text-white py-3 px-6 rounded transition-colors duration-300 border border-warmrasberry hover:bg-white hover:text-warmrasberry"
+        >
+          Connexion
+        </button>
+        <Link to="/signup">
+          <button
+            type="button"
+            className="bg-transparent border border-warmrasberry text-warmrasberry py-3 px-6 rounded transition-colors duration-300 hover:bg-warmrasberry hover:text-white"
+          >
+            S'inscrire ?
+          </button>
+        </Link>
           </div>
         </form>
       </section>

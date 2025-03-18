@@ -1,6 +1,6 @@
 import React from 'react';
-import Card_text from '../ui/Card_text';
-import Card_Post from '../ui/Card_Post';
+import Card_text from '../Component/Card_text';
+import Card_Post from '../Component/Card_Post';
 import { useLoaderData } from 'react-router-dom';
 
 

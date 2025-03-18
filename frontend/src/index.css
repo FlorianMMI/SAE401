@@ -4,9 +4,16 @@
 @theme {
 
   --color-orangepale: hsl(13, 44%, 77%);
+  --color-orangepale-hover: hsl(13, 44%, 70%);
+  
   --color-warmrasberry: hsl(329, 20%, 43%);
+  --color-warmrasberry-hover: hsl(329, 20%, 36%);
+  
   --color-thistlepink: hsl(294, 43%, 81%);
+  --color-thistlepink-hover: hsl(294, 43%, 74%);
+  
   --color-candypink: hsl(342, 96%, 89%);
+  --color-candypink-hover: hsl(342, 96%, 82%);
 
 }
 
