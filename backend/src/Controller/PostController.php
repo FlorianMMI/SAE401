@@ -2,23 +2,24 @@
 
 namespace App\Controller;
 
-use App\Entity\Post;
 use App\Repository\PostRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
-
-use Symfony\Component\Serializer\SerializerInterface;
+use App\Dto\Payload\CreatePostPayload;
+use App\Service\PostService;
+use Doctrine\ORM\EntityManagerInterface;
+// Removed unused SerializerInterface import.
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 class PostController extends AbstractController
 {
-    #[Route('/posts', name: 'post_list', methods: ['GET'])]
+    #[Route('/post', name: 'post_list', methods: ['GET'])]
     public function index(PostRepository $postRepository, Request $request): Response
     {
         $page = $request->query->get('page', 1);
-        $limit = 2;
+        $limit = 4;
         $offset = $limit * ($page - 1);
         
 
@@ -46,5 +47,18 @@ class PostController extends AbstractController
         ]);
         
     }
-    
+    #[Route('/posts', name: 'post_create', methods: ['POST'], format: 'json')]
+    public function create(Request $request, PostService $postService, EntityManagerInterface $entityManager): Response{
+
+        $data = json_decode($request->getContent(), true);
+
+        if (empty($data['message'])) {
+            throw new \Exception('Message is required');
+        }
+
+        $payload = new CreatePostPayload($data['message']);
+        $post = $postService->create($payload->getContent() , $entityManager);
+        
+        return new JsonResponse(['message' => 'Post created'], Response::HTTP_CREATED);
+    }
 }
