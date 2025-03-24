@@ -32,17 +32,25 @@ class UserService extends AbstractController
         return $user;
     }
 
-    public function create_token(array $data, EntityManagerInterface $entityManager): Online{
+    public function create_token(array $data, EntityManagerInterface $entityManager): Online {
         $userid = $data['id'];
+
+        // Vérifier si un token existe déjà pour cet utilisateur
+        $existingOnline = $entityManager->getRepository(Online::class)->findOneBy(['id_user_id' => $userid]);
+        if ($existingOnline) {
+            $entityManager->remove($existingOnline);
+            $entityManager->flush();
+        }
+
         $token = bin2hex(random_bytes(32));
-        // Fetch the User entity corresponding to $userid
+        // Récupérer l'entité User correspondant à $userid
         $user = $entityManager->getRepository(User::class)->find($userid);
-        $Online = new Online();
-        $Online->setToken($token);
-        $Online->setIdUser($user);
-        $entityManager->persist($Online);
+        $online = new Online();
+        $online->setToken($token);
+        $online->setIdUser($user);
+        $entityManager->persist($online);
         $entityManager->flush();
-        return $Online;
+        return $online;
     }
 
 }

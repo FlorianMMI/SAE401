@@ -18,7 +18,10 @@ class Online
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
-    private ?user $id_user = null;
+    private ?User $id_user = null;
+
+    #[ORM\Column]
+    private ?int $id_user_id = null;
 
     public function getId(): ?int
     {
@@ -37,14 +40,26 @@ class Online
         return $this;
     }
 
-    public function getIdUser(): ?user
+    public function getIdUser(): ?User
     {
         return $this->id_user;
     }
 
-    public function setIdUser(user $id_user): static
+    public function setIdUser(User $id_user): static
     {
         $this->id_user = $id_user;
+
+        return $this;
+    }
+
+    public function getIdUserId(): ?int
+    {
+        return $this->id_user_id;
+    }
+
+    public function setIdUserId(int $id_user_id): static
+    {
+        $this->id_user_id = $id_user_id;
 
         return $this;
     }

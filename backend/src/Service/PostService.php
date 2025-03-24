@@ -25,9 +25,7 @@ class PostService extends AbstractController
                 throw new \Exception('Invalid token');
             }
             $userId = $online->getIdUser()->getId();
-            
             $user =  $entityManager->getReference(\App\Entity\User::class, $userId);
-            dump($user);
             } else {
             throw new \Exception('Veuillez être connecter');
             }
