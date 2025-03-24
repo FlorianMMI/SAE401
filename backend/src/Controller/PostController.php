@@ -57,7 +57,7 @@ class PostController extends AbstractController
         }
 
         $payload = new CreatePostPayload($data['message']);
-        $post = $postService->create($payload->getContent() , $entityManager);
+        $post = $postService->create($payload->getContent() ,$request, $entityManager);
         
         return new JsonResponse(['message' => 'Post created'], Response::HTTP_CREATED);
     }

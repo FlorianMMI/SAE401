@@ -15,7 +15,13 @@
   --color-candypink: hsl(342, 96%, 89%);
   --color-candypink-hover: hsl(342, 96%, 82%);
 
+  --color-foreground: var(--color-warmrasberry);
+  --color-background: var(--color-orangepale);
+
+ 
+
 }
+
 
 @layer base {
   :root {
