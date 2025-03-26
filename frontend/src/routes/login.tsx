@@ -19,6 +19,7 @@ export default function Login() {
         const token = data.token;
         console.log('Token reçu:', token);
         localStorage.setItem('token', token);
+        window.location.href = '/';
       } else {
         console.error('Erreur lors de la connexion:', response.status);
       }

@@ -99,6 +99,7 @@ export default function Signup() {
       }
       // Vous pouvez gérer ici la redirection ou un message de succès
       console.log('Utilisateur inscrit avec succès');
+      window.location.href = '/login';
     } catch (error) {
       console.error(error);
       setSubmitError('Une erreur est survenue lors de l\'inscription.');

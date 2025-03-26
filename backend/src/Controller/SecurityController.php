@@ -33,6 +33,42 @@ class SecurityController extends AbstractController
         ]);
         // dd($user);
     }
+
+    #[Route('/api/getrole', name: 'get_user', methods: ['GET'], format: 'json')]
+    public function getRole(
+        #[CurrentUser()] User $user
+    ): Response {
+        return $this->json([
+            'user' => [
+                'id' => $user->getId(),
+                'roles' => $user->getRoles(),
+            ],
+        ]);
+    }
+
+    #[Route('/user', name: 'user', methods: ['GET'], format: 'json')]
+    public function listUsers(
+        #[CurrentUser()] ?User $user,
+        EntityManagerInterface $entityManager
+    ): Response {
+        if (!$user || !in_array('admin', $user->getRoles(), true)) {
+            dump($user);
+            return $this->json(['error' => 'Unauthorized'], Response::HTTP_FORBIDDEN);
+        }
+
+        $users = $entityManager->getRepository(User::class)->findAll();
+
+        $data = array_map(function (User $user) {
+            return [
+                'id' => $user->getId(),
+                'username' => $user->getUsername(),
+                'email' => $user->getEmail(),
+                'roles' => $user->getRoles(),
+            ];
+        }, $users);
+
+        return $this->json(['users' => $data]);
+    }
 }
 
 ?>

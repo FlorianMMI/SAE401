@@ -53,6 +53,23 @@ class UserService extends AbstractController
         return $online;
     }
 
+
+    public function findTokenByUser($id, $entityManager): ?Online
+    {
+        $onlineRepo = $entityManager->getRepository(Online::class);
+        $online = $onlineRepo->findOneBy(['idUser' => $id]);
+        return $online;
+    }
+
+    public function patchToken($online, $data, $entityManager): Online
+    {
+        $token = bin2hex(random_bytes(32));
+        $online->setToken($token);
+        $entityManager->persist($online);
+        $entityManager->flush();
+        return $online;
+    }
+
 }
 
 
@@ -84,6 +101,8 @@ class AccessTokenHandler extends AbstractAuthenticator {
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response {
         return null;
     }
+
+    
 }
 
 
