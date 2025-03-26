@@ -7,9 +7,13 @@ use App\Service\UserService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
+use Symfony\Component\HttpFoundation\Request;
+use App\Entity\Online;
+
 
 class SecurityController extends AbstractController
 {
@@ -17,9 +21,12 @@ class SecurityController extends AbstractController
     
     #[Route('/api/login', name: 'login_api', methods: ['POST'], format: 'json')]
     public function login(
-        #[CurrentUser()] User $user, EntityManagerInterface $entityManager
-    ): Response {
+        #[CurrentUser()] ?User $user, EntityManagerInterface $entityManager
+    ): JsonResponse {
         $userService = new UserService();
+        if (!$user) {
+            return $this->json(['error' => 'Unauthorized'], Response::HTTP_FORBIDDEN);
+        }
         $online = $userService->create_token(['id' => $user->getId()], $entityManager);
 
         return $this->json([
@@ -31,13 +38,32 @@ class SecurityController extends AbstractController
             ],
             'token' => $online->getToken(),
         ]);
-        // dd($user);
+        
     }
 
     #[Route('/api/getrole', name: 'get_user', methods: ['GET'], format: 'json')]
-    public function getRole(
-        #[CurrentUser()] User $user
-    ): Response {
+    public function getRole(Request $request, EntityManagerInterface $entityManager): Response {
+        // Get the token from the Authorization header
+        $token = $request->headers->get('Authorization');
+        if (!$token) {
+            return $this->json(['error' => 'Token not provided'], Response::HTTP_FORBIDDEN);
+        }
+        // Remove the "Bearer " prefix if present
+        if (strpos($token, 'Bearer ') === 0) {
+            $token = substr($token, 7);
+        }
+        
+        // Look for the token record in the database (assumes an Online entity exists)
+        $online = $entityManager->getRepository(Online::class)->findOneBy(['token' => $token]);
+        if (!$online) {
+            return $this->json(['error' => 'Token not found'], Response::HTTP_FORBIDDEN);
+        }
+
+        $user = $online->getIdUser();
+        if (!$user) {
+            return $this->json(['error' => 'User not found for the token'], Response::HTTP_FORBIDDEN);
+        }
+        
         return $this->json([
             'user' => [
                 'id' => $user->getId(),
@@ -46,15 +72,29 @@ class SecurityController extends AbstractController
         ]);
     }
 
+    private function isAdmin(?User $currentuser): ?Response
+    {
+        if (!$currentuser) {
+            return $this->json(['error' => 'Unauthorized 1'], Response::HTTP_FORBIDDEN);
+        }
+        if (!in_array('Role_admin', $currentuser->getRoles())) {
+            return $this->json(['error' => 'Unauthorized 2'], Response::HTTP_FORBIDDEN);
+        }
+        return null;
+    }
+
+    
     #[Route('/user', name: 'user', methods: ['GET'], format: 'json')]
     public function listUsers(
         #[CurrentUser()] ?User $user,
         EntityManagerInterface $entityManager
     ): Response {
-        if (!$user || !in_array('admin', $user->getRoles(), true)) {
-            dump($user);
-            return $this->json(['error' => 'Unauthorized'], Response::HTTP_FORBIDDEN);
+        
+        if ($response = $this->isAdmin($user)) {
+            return $response;
         }
+        //     return $this->json(['error' => 'Unauthorized'], Response::HTTP_FORBIDDEN);
+        // }
 
         $users = $entityManager->getRepository(User::class)->findAll();
 

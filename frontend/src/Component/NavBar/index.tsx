@@ -5,15 +5,17 @@ function isAdmin() {
 
 
     const token = localStorage.getItem('token');
-    if (!token) return false;
     const xhr = new XMLHttpRequest();
     xhr.open("GET", "http://localhost:8080/api/getrole", false); // synchronous request
-    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+    if (token) {
+      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+    }
     xhr.setRequestHeader("Accept", "application/json");
     xhr.send();
 
     if (xhr.status === 200) {
-      console.log(xhr.response);
+        const response = JSON.parse(xhr.responseText);
+        return response.user.roles.includes("Role_admin");
     }
     
     return false;
@@ -30,7 +32,7 @@ export default function NavBar() {
             <div className="text-base">
                 <Link
                     className="text-warmrasberry hover:text-warmrasberry-hover"
-                    to={isAdmin() ? "/admin" : "/"}
+                    to={isAdmin() ? "http://localhost:8080/admin" : "/"}
                 >
                     SocialName
                 </Link>

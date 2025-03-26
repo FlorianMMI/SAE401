@@ -35,13 +35,6 @@ class UserService extends AbstractController
     public function create_token(array $data, EntityManagerInterface $entityManager): Online {
         $userid = $data['id'];
 
-        // Vérifier si un token existe déjà pour cet utilisateur
-        $existingOnline = $entityManager->getRepository(Online::class)->findOneBy(['id_user_id' => $userid]);
-        if ($existingOnline) {
-            $entityManager->remove($existingOnline);
-            $entityManager->flush();
-        }
-
         $token = bin2hex(random_bytes(32));
         // Récupérer l'entité User correspondant à $userid
         $user = $entityManager->getRepository(User::class)->find($userid);
@@ -71,41 +64,5 @@ class UserService extends AbstractController
     }
 
 }
-
-
-
-class AccessTokenHandler extends AbstractAuthenticator {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager){
-        $this->entityManager = $entityManager;
-    }
-
-    public function supports(Request $request): ?bool {
-        return $request->headers->has('Authorization');
-    }
-    public function authenticate(Request $request): Passport {
-        $token = $request->headers->get('Authorization');
-        $online = $this->entityManager->getRepository(Online::class)->findOneBy(['token' => $token]);
-        if (!$online) {
-            throw new \Exception('Invalid token');
-        }
-        dump();
-        return new SelfValidatingPassport(new UserBadge($online->getIdUser()->getUserIdentifier()));
-    }
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response {
-        return new Response("Authentication Failed", Response::HTTP_UNAUTHORIZED);
-
-    
-    }
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response {
-        return null;
-    }
-
-    
-}
-
-
-
 
 ?>

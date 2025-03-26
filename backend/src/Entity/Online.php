@@ -13,19 +13,28 @@ class Online
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 280)]
-    private ?string $token = null;
-
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $id_user = null;
 
-    #[ORM\Column]
-    private ?int $id_user_id = null;
+    #[ORM\Column(length: 280)]
+    private ?string $token = null;
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getIdUser(): ?user
+    {
+        return $this->id_user;
+    }
+
+    public function setIdUser(?user $id_user): static
+    {
+        $this->id_user = $id_user;
+
+        return $this;
     }
 
     public function getToken(): ?string
@@ -36,30 +45,6 @@ class Online
     public function setToken(string $token): static
     {
         $this->token = $token;
-
-        return $this;
-    }
-
-    public function getIdUser(): ?User
-    {
-        return $this->id_user;
-    }
-
-    public function setIdUser(User $id_user): static
-    {
-        $this->id_user = $id_user;
-
-        return $this;
-    }
-
-    public function getIdUserId(): ?int
-    {
-        return $this->id_user_id;
-    }
-
-    public function setIdUserId(int $id_user_id): static
-    {
-        $this->id_user_id = $id_user_id;
 
         return $this;
     }

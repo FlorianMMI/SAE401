@@ -7,7 +7,6 @@ import Root from './routes/root.tsx';
 import Home, {loader as PostLoader} from './routes/home.tsx';
 import Login from './routes/login.tsx';
 import Signup from './routes/signup.tsx';
-import Admin from './routes/admin.tsx';
 
 import './index.css';
 
@@ -33,10 +32,7 @@ const router = createBrowserRouter([
     ]
     
   },
-  {
-    path: '/admin',
-    element: <Admin />,
-  }
+  
 ]);
 
 const rootElement = document.querySelector('#root');

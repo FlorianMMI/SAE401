@@ -33,4 +33,6 @@ class UserController extends AbstractController
         
         return new JsonResponse(['message' => 'Post created'], Response::HTTP_CREATED);
     }
+
+    
 } 
