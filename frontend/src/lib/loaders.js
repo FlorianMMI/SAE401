@@ -12,3 +12,9 @@ export async function fetchuser(id){
     
     return temp
 }
+
+export async function fetchPostId(id){
+    let answer = await fetch(`http://localhost:8080/post/${id}`);
+    let temp = await answer.json()
+    return temp
+}

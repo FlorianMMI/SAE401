@@ -50,7 +50,7 @@ class PostController extends AbstractController
         
     }
 
-    #[Route('/post/{userid}', name: 'post_list', methods: ['GET'])]
+    #[Route('/post/{userid}', name: 'post_list_id', methods: ['GET'])]
     public function postbyuser(PostRepository $postRepository, Request $request): Response
     {
         $page = $request->query->get('page', 1);

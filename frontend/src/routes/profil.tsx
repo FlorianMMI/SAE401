@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useLoaderData } from 'react-router-dom';
-import { fetchuser } from '../lib/loaders';
+import { fetchPostId, fetchuser } from '../lib/loaders';
 import ProfileHeader from '../Component/Profil_Header';
 import ProfilData from '../Component/Profil_Data';
+import Card_text from '../Component/Card_text';
 import Avatar from '../assets/Avatar.svg';
 
 export async function fetchMessageIds() {
@@ -39,8 +40,9 @@ export async function loader() {
       console.log(data.user.id);
       let id = data.user.id;
       const datas = await fetchuser(id);
-      console.log('ceci est user', datas);
-      return datas; // initial posts array (or null)
+      const posts = await fetchPostId(id);
+      console.log('ceci est user', posts);
+      return {datas, posts}; // initial posts array (or null)
     });
  
 }
@@ -54,12 +56,29 @@ interface User {
   bio?: string;
 }
 
+interface Post {
+  id: number;
+  likes: number;
+  user: {
+    id: number;
+    image?: string;
+    username: string;
+  };
+  message: string;
+  posts?: {
+    posts: Post[];
+  };
+}
+
 
 
 
 export default function Profil() {
-  const user = useLoaderData() as User;
-  console.log('user:', user.username);
+  const loaderData = useLoaderData() as { datas: User, posts: { posts: { posts : Post[]} } };
+  const user = loaderData.datas;
+  const data = loaderData.posts.posts.posts || [];
+  console.log('user:', user);
+  console.log('posts:', loaderData.posts.posts);
   return (
     <>
       <ProfileHeader 
@@ -71,10 +90,25 @@ export default function Profil() {
         siteweb={user.siteweb || 'Aucun site web'}
         localisation={user.localisation || 'Aucune localisation'}
       />
-
+      
       <div className="w-3/4 h-px bg-[var(--color-warmrasberry)] my-5 mx-auto" />
 
+      {data.map((post) => (
+          <Card_text
+            key={post.id}
+            likes = {post.likes}
+            id = {post.id}
+            user_id={post.user.id}
+            userImage={post.user.image || Avatar}
+            username={post.user.username}
+            message={post.message}
+          />
+        ))}
       
+
+      
+
+
     </>
   );
 }
