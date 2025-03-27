@@ -35,6 +35,14 @@ class PostService extends AbstractController
         $message->setUser($user);
         $entityManager->persist($message);
         $entityManager->flush();
+
+        // Insert an entry in the like table with 0 likes for the newly created post
+        $like = new \App\Entity\Like();
+        $like->setPost($message);
+        $like->setLikes(0);
+        $entityManager->persist($like);
+        $entityManager->flush();
+
         return $message;
     }
     

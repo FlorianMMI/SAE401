@@ -27,6 +27,9 @@ class Post
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user_id = null;
 
+    #[ORM\OneToOne(mappedBy: 'post', cascade: ['persist', 'remove'])]
+    private ?Like $likes = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -83,6 +86,23 @@ class Post
     public function setUserId(?User $user_id): static
     {
         $this->user_id = $user_id;
+
+        return $this;
+    }
+
+    public function getLikes(): ?Like
+    {
+        return $this->likes;
+    }
+
+    public function setLikes(Like $likes): static
+    {
+        // set the owning side of the relation if necessary
+        if ($likes->getPost() !== $this) {
+            $likes->setPost($this);
+        }
+
+        $this->likes = $likes;
 
         return $this;
     }

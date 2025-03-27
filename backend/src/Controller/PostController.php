@@ -19,7 +19,7 @@ class PostController extends AbstractController
     public function index(PostRepository $postRepository, Request $request): Response
     {
         $page = $request->query->get('page', 1);
-        $limit = 4;
+        $limit = 6;
         $offset = $limit * ($page - 1);
         
 
@@ -30,7 +30,9 @@ class PostController extends AbstractController
             'id' => $post->getId(),                
             'message' => $post->getMessage(),
             'created_at' => $post->getCreatedAt() ? $post->getCreatedAt()->format('Y-m-d H-i-s') : null,
+            'likes' => $post->getLikes() ? $post->getLikes()->getLikes() : 0,
             'user' => $post->getUser() ? [
+                'id' => $post->getUser()->getId(),
                 'username' => $post->getUser()->getUsername(),
                 'image' => $post->getUser()->getAvatar(),
             ] : null,
@@ -59,6 +61,22 @@ class PostController extends AbstractController
         $payload = new CreatePostPayload($data['message']);
         $post = $postService->create($payload->getContent() ,$request, $entityManager);
         
+        
         return new JsonResponse(['message' => 'Post created'], Response::HTTP_CREATED);
+    }
+
+    #[Route('/post/{id}', name: 'post_delete', methods: ['DELETE'], format: 'json')]
+    public function delete(int $id, PostRepository $postRepository, EntityManagerInterface $entityManager): Response
+    {
+        $post = $postRepository->find($id);
+
+        if (!$post) {
+            return new JsonResponse(['error' => 'Post not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $entityManager->remove($post);
+        $entityManager->flush();
+
+        return new JsonResponse(['message' => 'Post deleted'], Response::HTTP_OK);
     }
 }

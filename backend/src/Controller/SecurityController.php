@@ -41,7 +41,7 @@ class SecurityController extends AbstractController
         
     }
 
-    #[Route('/api/getrole', name: 'get_user', methods: ['GET'], format: 'json')]
+    #[Route('/api/getidmessage', name: 'get_user', methods: ['GET'], format: 'json')]
     public function getRole(Request $request, EntityManagerInterface $entityManager): Response {
         // Get the token from the Authorization header
         $token = $request->headers->get('Authorization');
@@ -67,7 +67,6 @@ class SecurityController extends AbstractController
         return $this->json([
             'user' => [
                 'id' => $user->getId(),
-                'roles' => $user->getRoles(),
             ],
         ]);
     }

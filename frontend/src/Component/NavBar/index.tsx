@@ -38,7 +38,27 @@ export default function NavBar() {
                 </Link>
             </div>
             <div className="text-base">
-                <a className="text-warmrasberry hover:text-warmrasberry-hover" href="">Logout</a>
+                {localStorage.getItem('token') ? (
+                    <Link
+                        to="/login"
+                        className="text-warmrasberry hover:text-warmrasberry-hover"
+                        
+                        onClick={() => {
+                            localStorage.removeItem('token');
+                            window.alert("Vous avez était deconnecté avec succès");
+                            window.location.href = '/login';
+                        }}
+                    >
+                        Logout
+                    </Link>
+                ) : (
+                    <Link
+                        to="/login"
+                        className="text-warmrasberry hover:text-warmrasberry-hover"
+                    >
+                        Connexion
+                    </Link>
+                )}
             </div>
             </div>
         </nav>

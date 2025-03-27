@@ -14,12 +14,16 @@ export async function loader() {
 interface Post {
   created_at: string;
   id: number;
+  likes: number;
   user: {
+    id: number;
     username: string;
     image?: string;
   };
   message: string;
 }
+
+
 
 export default function Home() {
   // initial posts from the loader
@@ -58,7 +62,7 @@ export default function Home() {
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, [loadMore]);
-
+  
   return (
     <>
       <Card_Post />
@@ -66,6 +70,9 @@ export default function Home() {
         {posts.map((post) => (
           <Card_text
             key={post.id}
+            likes = {post.likes}
+            id = {post.id}
+            user_id={post.user.id}
             userImage={post.user.image || Avatar}
             username={post.user.username}
             message={post.message}
