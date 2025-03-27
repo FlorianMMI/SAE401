@@ -6,7 +6,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Root from './routes/root.tsx';
 import Home, {loader as PostLoader} from './routes/home.tsx';
 import Login from './routes/login.tsx';
-import Profil from './routes/profil.tsx';
+import Profil, {loader as UserLoader} from './routes/profil.tsx';
 import Signup from './routes/signup.tsx';
 
 import './index.css';
@@ -33,6 +33,7 @@ const router = createBrowserRouter([
       {
         path: '/profile',
         element: <Profil />,
+        loader: UserLoader,
       }
     ]
     

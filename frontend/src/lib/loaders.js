@@ -9,5 +9,6 @@ export async function fetchPost(post){
 export async function fetchuser(id){
     let answer = await fetch(`http://localhost:8080/user/${id}`);
     let temp = await answer.json()
-    return temp.users
+    
+    return temp
 }

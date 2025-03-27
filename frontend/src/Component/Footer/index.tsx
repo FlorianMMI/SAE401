@@ -22,7 +22,7 @@ export default function Footer() {
             </div>
 
             <div className="text-rasberry text-lg">
-              <Link to="/login"><img src={ProfileLogo} alt="Logo" className="h-8" /></Link>
+              <Link to="/profile"><img src={ProfileLogo} alt="Logo" className="h-8" /></Link>
             </div>
           </div>
         </nav>

@@ -15,7 +15,7 @@ export default function ProfilHeader({avatar, images}: ProfilHeaderProps) {
             style={{ backgroundImage: `url(${images})` }}
         >
             <div className="w-[100px] h-[100px] rounded-full overflow-hidden border-2 border-black">
-            {avatar}
+            <img src={avatar} alt="User avatar" className="w-full h-full object-cover" />
             </div>
         </div>
         
