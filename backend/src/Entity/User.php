@@ -57,6 +57,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 80, nullable: true)]
     private ?string $localisation = null;
 
+    #[ORM\Column]
+    private ?bool $isblocked = null;
+
     public function __construct()
     {
         $this->post = new ArrayCollection();
@@ -235,6 +238,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLocalisation(?string $localisation): static
     {
         $this->localisation = $localisation;
+
+        return $this;
+    }
+
+    public function isblocked(): ?bool
+    {
+        return $this->isblocked;
+    }
+
+    public function setIsblocked(bool $isblocked): static
+    {
+        $this->isblocked = $isblocked;
 
         return $this;
     }

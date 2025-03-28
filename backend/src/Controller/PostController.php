@@ -26,16 +26,21 @@ class PostController extends AbstractController
 
         $posts = iterator_to_array($postRepository->paginateAllOrderedByLatest($offset, $limit));
         $paginator = ['posts' => array_map(function($post) {
+            $blocked = $post->getUser() && $post->getUser()->isblocked();
             return [
-            'id' => $post->getId(),                
-            'message' => $post->getMessage(),
-            'created_at' => $post->getCreatedAt() ? $post->getCreatedAt()->format('Y-m-d H-i-s') : null,
-            'likes' => $post->getLikes() ? $post->getLikes()->getLikes() : 0,
-            'user' => $post->getUser() ? [
-                'id' => $post->getUser()->getId(),
-                'username' => $post->getUser()->getUsername(),
-                'image' => $post->getUser()->getAvatar(),
-            ] : null,
+                'id' => $post->getId(),                
+                'message' => $blocked
+                    ? "Ce compte a été bloqué pour non respect des conditions d’utilisation"
+                    : $post->getMessage(),
+                'created_at' => $post->getCreatedAt()
+                    ? $post->getCreatedAt()->format('Y-m-d H-i-s')
+                    : null,
+                'likes' => $blocked ? null : ($post->getLikes() ? $post->getLikes()->getLikes() : 0),
+                'user' => $post->getUser() ? [
+                    'id' => $post->getUser()->getId(),
+                    'username' => $blocked ? "Utilisateur Bloqué par ADMIN" : $post->getUser()->getUsername(),
+                    'image' => $post->getUser()->getAvatar(),
+                ] : null,
             ];
         }, $posts)];
 

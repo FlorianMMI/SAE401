@@ -27,6 +27,8 @@ class UserService extends AbstractController
         $user->setPassword($hashedPassword);
         $user->setEmail($data['email']);
         $user->setUsername($data['username']);
+        $user->setIsblocked(false);
+        $user->setRoles(['ROLE_USER']);
         $entityManager->persist($user);
         $entityManager->flush();
         return $user;

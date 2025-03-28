@@ -23,22 +23,24 @@ interface Post {
   message: string;
 }
 
-
-
 export default function Home() {
-  // initial posts from the loader
+  // posts issus du loader
   const initialPosts = useLoaderData() as Post[];
   const [posts, setPosts] = useState<Post[]>(initialPosts || []);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
 
+  // États liés au rafraîchissement
+  const [autoRefresh, setAutoRefresh] = useState(false);
+  const refreshInterval = 30000; // 30 secondes
+
+  // Fonction pour charger les anciens posts avec pagination
   const loadMore = useCallback(async () => {
     if (loading || !hasMore) return;
     setLoading(true);
     const nextPage = page + 1;
     const result = await fetchPost(nextPage);
-    // Ici, on considère que si result.posts est null ou vide, il n'y a plus de données.
     if (!result.posts || result.posts.length === 0) {
       setHasMore(false);
     } else {
@@ -48,9 +50,35 @@ export default function Home() {
     setLoading(false);
   }, [page, hasMore, loading]);
 
+  // Fonction pour rafraîchir le fil avec les nouveaux posts
+  // On récupère la page 1 et on ajoute en haut les posts dont la date est plus récente que le premier post actuel.
+  const refreshFeed = useCallback(async () => {
+    const result = await fetchPost(1);
+    if (result.posts) {
+      // Replace all posts with the new ones
+      setPosts(result.posts);
+      // Reset pagination state
+      setPage(1);
+      setHasMore(true);
+    }
+  }, []);
+
+  // Auto-refresh toutes les X secondes si activé
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (autoRefresh) {
+      interval = setInterval(() => {
+        refreshFeed();
+      }, refreshInterval);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [autoRefresh, refreshFeed]);
+
+  // Détecter le scroll pour charger plus de posts
   useEffect(() => {
     const onScroll = () => {
-      // Vérifie si on est à 50px du bas
       if (
         window.innerHeight + document.documentElement.scrollTop >=
         document.documentElement.offsetHeight - 50
@@ -62,16 +90,32 @@ export default function Home() {
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, [loadMore]);
-  
+
   return (
     <>
       <Card_Post />
+      <div className="my-4 flex items-center justify-between px-4">
+        <button
+          onClick={refreshFeed}
+          className="bg-warmrasberry hover:bg-thistlepink hover:bg-opacity-90 text-white py-2 px-4 rounded transition cursor-pointer"
+        >
+          Rafraîchir
+        </button>
+        <label className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            checked={autoRefresh}
+            onChange={(e) => setAutoRefresh(e.target.checked)}
+          />
+          <span>Auto rafraîchissement ({refreshInterval / 1000}s)</span>
+        </label>
+      </div>
       <div className="my-12">
         {posts.map((post) => (
           <Card_text
             key={post.id}
-            likes = {post.likes}
-            id = {post.id}
+            likes={post.likes}
+            id={post.id}
             user_id={post.user.id}
             userImage={post.user.image || Avatar}
             username={post.user.username}
