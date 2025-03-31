@@ -163,6 +163,7 @@ export default function Card_text({ userImage, username, message, likes, id, use
                                         }
                                         
                                         console.log("Successfully followed user");
+                                        setIsFollowed(true);
                                     } catch (error) {
                                         console.error("Error following user:", error);
                                     }

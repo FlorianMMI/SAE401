@@ -40,7 +40,7 @@ export default function Card_Post() {
             await sendPost(text);
             setText("");
             setError("Post créé !");
-            // window.location.reload();
+            window.location.reload();
         } catch (err: any) {
             setError(err.message);
         }  

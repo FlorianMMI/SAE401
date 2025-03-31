@@ -58,7 +58,7 @@ class UserController extends AbstractController
         return new JsonResponse($result, Response::HTTP_OK);
     }
 
-    #[Route('/user/subscribes', name: 'user_create', methods: ['POST'])]
+    #[Route('/user/subscribes', name: 'user_sub', methods: ['POST'])]
     public function subscribes_create(Request $request, EntityManagerInterface $entityManager): Response {
         $data = json_decode($request->getContent(), true);
         $user = $entityManager->getRepository(User::class)->find($data['id']);
@@ -79,6 +79,29 @@ class UserController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
         return new JsonResponse(['message' => 'Subscription created'], Response::HTTP_CREATED);
+    }
+    
+    #[Route('/user/unsubscribes', name: 'user_unsub', methods: ['POST'])]
+    public function unsubscribes_remove(Request $request, EntityManagerInterface $entityManager): Response {
+        $data = json_decode($request->getContent(), true);
+        $user = $entityManager->getRepository(User::class)->find($data['id']);
+        
+        if (!$user) {
+            return new JsonResponse(['message' => 'User not found'], Response::HTTP_NOT_FOUND);
+        }
+        
+        $targetUser = $entityManager->getRepository(User::class)->find($data['sub']);
+        
+        if (!$targetUser) {
+            return new JsonResponse(['message' => 'Target user not found'], Response::HTTP_NOT_FOUND);
+        }
+        
+        // Assuming User entity has methods to manage followers
+        $user->removeFollower($targetUser);
+        
+        $entityManager->persist($user);
+        $entityManager->flush();
+        return new JsonResponse(['message' => 'Subscription removed'], Response::HTTP_OK);
     }
     
     #[Route('/user/{id}/is-following', name: 'check_is_following', methods: ['GET'])]
