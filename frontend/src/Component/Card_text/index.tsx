@@ -59,13 +59,6 @@ async function isFollowed(user_id: number){
 
 export default function Card_text({ userImage, username, message, likes, id, user_id }: CardTextProps) {
     
-    // React.useEffect(() => {
-    //     async function checkConnection() {
-    //         const connection = await isconnected();
-    //         console.log(connection);
-    //     }
-    //     checkConnection();
-    // }, []);
     const [isOwner, setIsOwner] = React.useState<boolean>(false);
     const [isFollowing, setIsFollowed] = React.useState<boolean>(false);
 
