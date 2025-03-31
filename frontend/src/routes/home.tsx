@@ -26,7 +26,7 @@ interface Post {
 // Composant spinner stylisé
 function LoadingSpinner() {
   return (
-    <div className="flex justify-center items-center p-4">
+    <div className="flex flex-col justify-center items-center p-4">
       <svg className="animate-spin h-8 w-8 text-thistlepink" viewBox="0 0 24 24">
         <circle
           className="opacity-25"
@@ -42,6 +42,7 @@ function LoadingSpinner() {
           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
         ></path>
       </svg>
+      <p className="opacity-50 mt-2">Chargement en cours</p>
     </div>
   );
 }
@@ -123,12 +124,41 @@ export default function Home() {
     <>
       <Card_Post />
       <div className="my-4 flex items-center justify-between px-4">
-        <button
-          onClick={refreshFeed}
-          className="bg-warmrasberry hover:bg-thistlepink hover:bg-opacity-90 text-white py-2 px-4 rounded transition cursor-pointer"
-        >
-          Rafraîchir
-        </button>
+        <div className="flex space-x-2">
+            <button
+            onClick={() => {
+              setPosts([]);
+              refreshFeed();
+            }}
+            className="bg-warmrasberry hover:bg-thistlepink hover:bg-opacity-90 text-white py-2 px-4 rounded transition cursor-pointer"
+            >
+            Rafraîchir
+            </button>
+            <button
+              onClick={async () => {
+              setPosts([]);
+              setLoading(true);
+              try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('http://localhost:8080/posting/following', {
+                headers: {
+                  'Authorization': `Bearer ${token}`
+                }
+                });
+                const data = await response.json();
+                console.log(data.posts);
+                setPosts(data.posts.posts);
+              } catch (error) {
+                console.error(error);
+              } finally {
+                setLoading(false);
+              }
+              }}
+              className="bg-thistlepink  hover:bg-thistlepink-hover text-white py-2 px-4 rounded transition cursor-pointer"
+            >
+              Following
+            </button>
+        </div>
         <label className="flex items-center space-x-2">
           <input
             type="checkbox"

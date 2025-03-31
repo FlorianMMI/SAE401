@@ -40,7 +40,8 @@ class PostRepository extends ServiceEntityRepository
         }
        
         return $this->createQueryBuilder('p')
-            ->where('p.user IN (:followedUserIds)')
+            ->join('p.user_id', 'a')
+            ->where('a.id IN (:followedUserIds)')
             ->setParameter('followedUserIds', $followedUserIds)
             ->orderBy('p.created_at', 'DESC')
             ->setFirstResult($offset)
