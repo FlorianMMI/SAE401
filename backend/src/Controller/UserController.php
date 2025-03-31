@@ -57,5 +57,60 @@ class UserController extends AbstractController
         
         return new JsonResponse($result, Response::HTTP_OK);
     }
+
+    #[Route('/user/subscribes', name: 'user_create', methods: ['POST'])]
+    public function subscribes_create(Request $request, EntityManagerInterface $entityManager): Response {
+        $data = json_decode($request->getContent(), true);
+        $user = $entityManager->getRepository(User::class)->find($data['id']);
+        
+        if (!$user) {
+            return new JsonResponse(['message' => 'User not found'], Response::HTTP_NOT_FOUND);
+        }
+        
+        $targetUser = $entityManager->getRepository(User::class)->find($data['sub']);
+        
+        if (!$targetUser) {
+            return new JsonResponse(['message' => 'Target user not found'], Response::HTTP_NOT_FOUND);
+        }
+        
+        // Assuming User entity has methods to manage followers
+        $user->addFollower($targetUser);
+        
+        $entityManager->persist($user);
+        $entityManager->flush();
+        return new JsonResponse(['message' => 'Subscription created'], Response::HTTP_CREATED);
+    }
+    
+    #[Route('/user/{id}/is-following', name: 'check_is_following', methods: ['GET'])]
+    public function checkIsFollowing(#[CurrentUser()] ?User $currentUser, int $id, EntityManagerInterface $entityManager): Response
+    {
+        // Check if current user exists (is logged in)
+        if (!$currentUser) {
+            return new JsonResponse(['message' => 'Not authenticated'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        // Find the target user
+        $targetUser = $entityManager->getRepository(User::class)->find($id);
+
+        if (!$targetUser) {
+            return new JsonResponse(['message' => 'Target user not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        // Directly query the user_user table
+        $connection = $entityManager->getConnection();
+        $sql = '
+            SELECT COUNT(1) as is_following
+            FROM user_user
+            WHERE user_source = :currentUserId AND user_target = :targetUserId
+        ';
+        $result = $connection->executeQuery($sql, [
+            'currentUserId' => $currentUser->getId(),
+            'targetUserId' => $id
+        ]);
+
+        $isFollowing = (bool) $result->fetchOne();
+
+        return new JsonResponse(['isFollowing' => $isFollowing], Response::HTTP_OK);
+    }
     
 } 

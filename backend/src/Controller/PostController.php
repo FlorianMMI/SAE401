@@ -19,7 +19,7 @@ class PostController extends AbstractController
     public function index(PostRepository $postRepository, Request $request): Response
     {
         $page = $request->query->get('page', 1);
-        $limit = 6;
+        $limit = 20;
         $offset = $limit * ($page - 1);
         
 
@@ -59,7 +59,7 @@ class PostController extends AbstractController
     public function postbyuser(PostRepository $postRepository, Request $request): Response
     {
         $page = $request->query->get('page', 1);
-        $limit = 6;
+        $limit = 20;
         $offset = $limit * ($page - 1);
         
 
