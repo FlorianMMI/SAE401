@@ -28,6 +28,26 @@ class PostRepository extends ServiceEntityRepository
 
         return new Paginator($query);
     }
+
+
+    public function findPostsFromFollowedUsers($user, int $offset, int $limit): array
+    {
+        // Extract followed user IDs from the provided user object.
+        $followedUserIds = [];
+        foreach ($user->getFollower() as $followedUser) {
+            
+            $followedUserIds[] = $followedUser->getId();
+        }
+       
+        return $this->createQueryBuilder('p')
+            ->where('p.user IN (:followedUserIds)')
+            ->setParameter('followedUserIds', $followedUserIds)
+            ->orderBy('p.created_at', 'DESC')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
     //    /**
     //     * @return Post[] Returns an array of Post objects
     //     */

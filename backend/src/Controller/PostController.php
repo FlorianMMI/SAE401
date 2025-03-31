@@ -97,6 +97,46 @@ class PostController extends AbstractController
     }
 
 
+    // #[Route('/post/following', name: 'post_following', methods: ['GET'])]
+    // public function followingPosts(PostRepository $postRepository, Request $request): Response
+    // {
+    //     $user = $this->getUser();
+        
+    //     if (!$user) {
+    //         return new JsonResponse(['error' => 'User not authenticated'], Response::HTTP_UNAUTHORIZED);
+    //     }
+        
+    //     $page = $request->query->get('page', 1);
+    //     $limit = 20;
+    //     $offset = $limit * ($page - 1);
+
+    //     // Assumes PostRepository has a method to retrieve posts from users followed by the current user.
+    //     $posts = $postRepository->findPostsFromFollowedUsers($user, $offset, $limit);
+
+    //     $paginator = ['posts' => array_map(function($post) {
+    //         return [
+    //             'id' => $post->getId(),
+    //             'message' => $post->getMessage(),
+    //             'created_at' => $post->getCreatedAt() ? $post->getCreatedAt()->format('Y-m-d H-i-s') : null,
+    //             'likes' => $post->getLikes() ? $post->getLikes()->getLikes() : 0,
+    //             'user' => $post->getUser() ? [
+    //                 'id' => $post->getUser()->getId(),
+    //                 'username' => $post->getUser()->getUsername(),
+    //                 'image' => $post->getUser()->getAvatar(),
+    //             ] : null,
+    //         ];
+    //     }, $posts)];
+
+    //     $previousPage = $page > 1 ? $page - 1 : null;
+    //     $nextPage = count($posts) === $limit ? $page + 1 : null;
+        
+    //     return $this->json([
+    //         'posts' => $paginator,
+    //         'previous_page' => $previousPage,
+    //         'next_page' => $nextPage
+    //     ]);
+    // }
+
     #[Route('/posts', name: 'post_create', methods: ['POST'], format: 'json')]
     public function create(Request $request, PostService $postService, EntityManagerInterface $entityManager): Response{
 

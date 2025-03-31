@@ -23,6 +23,29 @@ interface Post {
   message: string;
 }
 
+// Composant spinner stylisé
+function LoadingSpinner() {
+  return (
+    <div className="flex justify-center items-center p-4">
+      <svg className="animate-spin h-8 w-8 text-thistlepink" viewBox="0 0 24 24">
+        <circle
+          className="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          strokeWidth="4"
+        ></circle>
+        <path
+          className="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+        ></path>
+      </svg>
+    </div>
+  );
+}
+
 export default function Home() {
   // posts issus du loader
   const initialPosts = useLoaderData() as Post[];
@@ -51,16 +74,16 @@ export default function Home() {
   }, [page, hasMore, loading]);
 
   // Fonction pour rafraîchir le fil avec les nouveaux posts
-  // On récupère la page 1 et on ajoute en haut les posts dont la date est plus récente que le premier post actuel.
+  // On récupère la page 1 et on ajoute en haut les posts mis à jour.
   const refreshFeed = useCallback(async () => {
+    setLoading(true);
     const result = await fetchPost(1);
     if (result.posts) {
-      // Replace all posts with the new ones
       setPosts(result.posts);
-      // Reset pagination state
       setPage(1);
       setHasMore(true);
     }
+    setLoading(false);
   }, []);
 
   // Auto-refresh toutes les X secondes si activé
@@ -90,6 +113,11 @@ export default function Home() {
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, [loadMore]);
+
+  // S'il n'y a pas de posts et que le chargement est en cours, afficher le spinner plein écran.
+  if (posts.length === 0 && loading) {
+    return <div className="min-h-screen flex justify-center items-center"><LoadingSpinner /></div>;
+  }
 
   return (
     <>
@@ -122,6 +150,7 @@ export default function Home() {
             message={post.message}
           />
         ))}
+        {loading && posts.length > 0 && <LoadingSpinner />}
         {!hasMore && <p className="text-center">Aucun post supplémentaire.</p>}
       </div>
     </>

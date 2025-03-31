@@ -73,6 +73,8 @@ export default function Card_text({ userImage, username, message, likes, id, use
         }
         checkStatus();
     }, [id, user_id]);
+
+    
     return (
         <section className="flex flex-row justify-center mx-12 mt-5">
             <div className="flex flex-col items-center justify-center h-full bg-thistlepink py-5 px-10 rounded-xl gap-4 w-[400px]">
