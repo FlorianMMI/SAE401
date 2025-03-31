@@ -5,6 +5,7 @@ import Button from '../ui/button';
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -26,6 +27,7 @@ export default function Login() {
       }
     } catch (err) {
       console.error('Erreur:', err);
+      setError(true);
     }
   };
 
@@ -35,6 +37,11 @@ export default function Login() {
         <h1 className="text-4xl font-semibold text-warmrasberry mb-12">Re-Bonjour !</h1>
         <form className="w-full max-w-lg" onSubmit={handleSubmit}>
           <div className="mb-6">
+          {error && (
+          <p className="mb-4 text-red-600">
+          Email ou mot de passe incorrect
+            </p>
+          )}
             <label htmlFor="email" className="block text-warmrasberry mb-3">
               Email
             </label>
