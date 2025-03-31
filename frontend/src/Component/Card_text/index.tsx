@@ -120,6 +120,7 @@ export default function Card_text({ userImage, username, message, likes, id, use
                                         }
                                         
                                         console.log("Successfully unfollowed user");
+                                        window.location.reload();
                                     } catch (error) {
                                         console.error("Error unfollowing user:", error);
                                     }
@@ -164,6 +165,7 @@ export default function Card_text({ userImage, username, message, likes, id, use
                                         
                                         console.log("Successfully followed user");
                                         setIsFollowed(true);
+                                        window.location.reload();
                                     } catch (error) {
                                         console.error("Error following user:", error);
                                     }
