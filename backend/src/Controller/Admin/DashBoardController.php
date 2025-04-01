@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Controller\Admin;
+
+use App\Entity\Post;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -9,6 +11,7 @@ use Symfony\UX\Chartjs\Model\Chart;
 use Symfony\Component\HttpFoundation\Response;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use App\Entity\User;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashBoardController extends AbstractDashboardController
@@ -84,12 +87,32 @@ class DashBoardController extends AbstractDashboardController
         
     }
 
+    public function configureCrud(): Crud
+    {
+        return Crud::new()
+            // set the page title to Dashboard
+            ->setPageTitle('index', 'Dashboard')
+            ->setDateFormat('d/m/Y')
+            // set the default page title to "Dashboard"
+            ->setPageTitle('index', 'Dashboard')
+            // set the default page title to "Dashboard"
+            ->setPageTitle('new', 'Create new %entity_label%')
+            // set the default page title to "Dashboard"
+            ->setPageTitle('edit', 'Edit %entity_label%')
+            // set the default page title to "Dashboard"
+            ->setPageTitle('detail', '%entity_label% details')
+            
+        ;
+    }
+
     public function configureMenuItems(): iterable
     {
         return [
             MenuItem::linkToDashboard('Dashboard', 'fa fa-home'),
             MenuItem::section('Users'),
             MenuItem::linkToCrud('User', 'fa fa-user', User::class),
+            MenuItem::section('Posts'),
+            MenuItem::linkToCrud('Post', 'fa fa-post', Post::class),
         ];
         
     }

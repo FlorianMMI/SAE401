@@ -2,6 +2,7 @@ import { Container } from "postcss";
 import React from "react";
 import Likes from "../../ui/likes";
 import Poubelle from "../../ui/poubelle";
+import Modification from "../../ui/modification";
 import { useContext } from "react";
 
 
@@ -183,72 +184,77 @@ export default function Card_text({ userImage, username, message, likes, id, use
                 {message}
             </p>
 
-            <div className="w-full flex items-center justify-start">
+            <div className="w-full flex items-center gap-7 justify-start">
                 <Likes count={likes} id={id} />
                 {isOwner && (
-                <div className="flex justify-end w-full mt-2" onClick={() => {
-                const tempDiv = document.createElement("div");
-                tempDiv.style.backgroundColor = "var(--color-thistlepink, #FFA500)";
-                tempDiv.style.padding = "20px";
-                tempDiv.style.position = "fixed";
-                tempDiv.style.top = "50%";
-                tempDiv.style.left = "50%";
-                tempDiv.style.transform = "translate(-50%, -50%)";
-                tempDiv.style.boxShadow = "0 0 10px rgba(0,0,0,0.25)";
-                tempDiv.style.zIndex = "1000";
-                tempDiv.style.borderRadius = "12px"; // Rounded corners
+                    <>
+                        
+                        <div
+                            className="flex justify-end w-full mt-2"
+                            onClick={() => {
+                                const tempDiv = document.createElement("div");
+                                tempDiv.style.backgroundColor = "var(--color-thistlepink, #FFA500)";
+                                tempDiv.style.padding = "20px";
+                                tempDiv.style.position = "fixed";
+                                tempDiv.style.top = "50%";
+                                tempDiv.style.left = "50%";
+                                tempDiv.style.transform = "translate(-50%, -50%)";
+                                tempDiv.style.boxShadow = "0 0 10px rgba(0,0,0,0.25)";
+                                tempDiv.style.zIndex = "1000";
+                                tempDiv.style.borderRadius = "12px";
 
-                const text = document.createElement("p");
-                text.textContent = "Voulez-vous vraiment supprimer ce post ?";
-                text.style.color = "var(--color-warmrasberry, #D62828)"; // Warmrasberry color
-                text.style.marginBottom = "20px"; // Ajout d'un gap entre le texte et les boutons
+                                const text = document.createElement("p");
+                                text.textContent = "Voulez-vous vraiment supprimer ce post ?";
+                                text.style.color = "var(--color-warmrasberry, #D62828)";
+                                text.style.marginBottom = "20px";
 
-                const confirmBtn = document.createElement("button");
-                confirmBtn.textContent = "confirmer";
-                confirmBtn.style.marginRight = "10px";
-                confirmBtn.style.padding = "8px 12px";
-                confirmBtn.style.border = "none";
-                confirmBtn.style.borderRadius = "8px"; // Bouton arrondi
-                confirmBtn.style.backgroundColor = "var(--color-warmrasberry, #D62828)";
-                confirmBtn.style.color = "white";
+                                const confirmBtn = document.createElement("button");
+                                confirmBtn.textContent = "confirmer";
+                                confirmBtn.style.marginRight = "10px";
+                                confirmBtn.style.padding = "8px 12px";
+                                confirmBtn.style.border = "none";
+                                confirmBtn.style.borderRadius = "8px";
+                                confirmBtn.style.backgroundColor = "var(--color-warmrasberry, #D62828)";
+                                confirmBtn.style.color = "white";
 
-                const cancelBtn = document.createElement("button");
-                cancelBtn.textContent = "annuler";
-                cancelBtn.style.padding = "8px 12px";
-                cancelBtn.style.border = "none";
-                cancelBtn.style.borderRadius = "8px"; // Bouton arrondi
-                cancelBtn.style.backgroundColor = "var(--color-warmrasberry, #D62828)";
-                cancelBtn.style.color = "white";
+                                const cancelBtn = document.createElement("button");
+                                cancelBtn.textContent = "annuler";
+                                cancelBtn.style.padding = "8px 12px";
+                                cancelBtn.style.border = "none";
+                                cancelBtn.style.borderRadius = "8px";
+                                cancelBtn.style.backgroundColor = "var(--color-warmrasberry, #D62828)";
+                                cancelBtn.style.color = "white";
 
-                tempDiv.appendChild(text);
-                tempDiv.appendChild(confirmBtn);
-                tempDiv.appendChild(cancelBtn);
+                                tempDiv.appendChild(text);
+                                tempDiv.appendChild(confirmBtn);
+                                tempDiv.appendChild(cancelBtn);
 
-                document.body.appendChild(tempDiv);
-                
-                confirmBtn.onclick = async () => {
-                    document.body.removeChild(tempDiv);
-                    try {
-                    const response = await fetch(`http://localhost:8080/post/${id}`, {
-                        method: "DELETE"
-                    });
-                    if (!response.ok) {
-                        throw new Error("Erreur lors de la suppression du post");
-                    }
-                    console.log("Post supprimé avec succès");
-                    // Relancer la requête des post
-                    window.location.reload();
-                    } catch (error) {
-                    console.error("Une erreur est survenue :", error);
-                    }
-                };
-                
-                cancelBtn.onclick = () => {
-                    document.body.removeChild(tempDiv);
-                };
-                }}>
-                <Poubelle />
-                </div>
+                                document.body.appendChild(tempDiv);
+
+                                confirmBtn.onclick = async () => {
+                                    document.body.removeChild(tempDiv);
+                                    try {
+                                        const response = await fetch(`http://localhost:8080/post/${id}`, {
+                                            method: "DELETE",
+                                        });
+                                        if (!response.ok) {
+                                            throw new Error("Erreur lors de la suppression du post");
+                                        }
+                                        console.log("Post supprimé avec succès");
+                                        window.location.reload();
+                                    } catch (error) {
+                                        console.error("Une erreur est survenue :", error);
+                                    }
+                                };
+
+                                cancelBtn.onclick = () => {
+                                    document.body.removeChild(tempDiv);
+                                };
+                            }}
+                        >
+                            <Poubelle />
+                        </div>
+                    </>
                 )}
             </div>
             

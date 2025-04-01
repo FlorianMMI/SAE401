@@ -30,6 +30,9 @@ class Post
     #[ORM\OneToOne(mappedBy: 'post', cascade: ['persist', 'remove'])]
     private ?Like $likes = null;
 
+    #[ORM\Column]
+    private ?bool $isCensored = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -103,6 +106,18 @@ class Post
         }
 
         $this->likes = $likes;
+
+        return $this;
+    }
+
+    public function isCensored(): ?bool
+    {
+        return $this->isCensored;
+    }
+
+    public function setIsCensored(bool $isCensored): static
+    {
+        $this->isCensored = $isCensored;
 
         return $this;
     }

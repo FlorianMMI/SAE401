@@ -12,12 +12,16 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class PostController extends AbstractController
 {
     #[Route('/post', name: 'post_list', methods: ['GET'])]
-    public function index(PostRepository $postRepository, Request $request): Response
+    public function index(   PostRepository $postRepository, Request $request): Response
     {
+      
+
+
         $page = $request->query->get('page', 1);
         $limit = 20;
         $offset = $limit * ($page - 1);
@@ -27,11 +31,16 @@ class PostController extends AbstractController
         $posts = iterator_to_array($postRepository->paginateAllOrderedByLatest($offset, $limit));
         $paginator = ['posts' => array_map(function($post) {
             $blocked = $post->getUser() && $post->getUser()->isblocked();
+            $censored = $post->isCensored();
+            ;
             return [
-                'id' => $post->getId(),                
-                'message' => $blocked
-                    ? "Ce compte a été bloqué pour non respect des conditions d’utilisation"
-                    : $post->getMessage(),
+                'id' => $post->getId(),     
+                           
+                'message' => $censored
+                    ? "Le contenu à était censuré car il ne respectait pas les conditions d’utilisation"
+                    : ($blocked
+                        ? "Ce compte a été bloqué pour non respect des conditions d’utilisation"
+                        : $post->getMessage()),
                 'created_at' => $post->getCreatedAt()
                     ? $post->getCreatedAt()->format('Y-m-d H-i-s')
                     : null,
@@ -40,6 +49,7 @@ class PostController extends AbstractController
                     'id' => $post->getUser()->getId(),
                     'username' => $blocked ? "Utilisateur Bloqué par ADMIN" : $post->getUser()->getUsername(),
                     'image' => $post->getUser()->getAvatar(),
+                    
                 ] : null,
             ];
         }, $posts)];
