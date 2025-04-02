@@ -33,6 +33,9 @@ class Post
     #[ORM\Column]
     private ?bool $isCensored = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $media = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -118,6 +121,18 @@ class Post
     public function setIsCensored(bool $isCensored): static
     {
         $this->isCensored = $isCensored;
+
+        return $this;
+    }
+
+    public function getMedia(): ?string
+    {
+        return $this->media;
+    }
+
+    public function setMedia(?string $media): static
+    {
+        $this->media = $media;
 
         return $this;
     }

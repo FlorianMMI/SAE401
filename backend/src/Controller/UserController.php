@@ -8,12 +8,14 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Dto\Payload\CreateUserPayload;
 use App\Entity\User;
 use App\Service\UserService;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AbstractController
@@ -57,6 +59,85 @@ class UserController extends AbstractController
         
         return new JsonResponse($result, Response::HTTP_OK);
     }
+
+
+    #[Route('/userpatch', name: 'user_update', methods: ['POST'])]
+    public function patch(#[CurrentUser()] ?User $Cuser, Request $request, EntityManagerInterface $entityManager){
+        
+
+        $id = $Cuser->getId();
+        
+        $user = $entityManager->getRepository(User::class)->find($id);
+
+        if (!$user) {
+            return new JsonResponse(['message' => 'User not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $username = $request->request->get('username');
+        $bio = $request->request->get('bio');
+        $siteweb = $request->request->get('siteweb');
+        $localisation = $request->request->get('localisation');
+
+        if (null !== $username) {
+            $user->setUsername($username);
+        }
+        if (null !== $bio) {
+            $user->setBio($bio);
+        }
+        if (null !== $siteweb) {
+            $user->setSiteweb($siteweb);
+        }
+        if (null !== $localisation) {
+            $user->setLocalisation($localisation);
+        }
+
+        
+        
+        $uploadedavatar = $request->files->get('avatar');
+        $uploadedbanniere = $request->files->get('banniere');
+
+
+
+
+        $destinationA = $this->getParameter('kernel.project_dir') . '/public/avatar';
+        $destinationB = $this->getParameter('kernel.project_dir') . '/public/banniere';
+        
+        try {
+            if ($uploadedavatar !== null) {
+            $filename = $uploadedavatar->getClientOriginalName();
+            //Retourne le nom du fichier 
+            $uploadedavatar->move($destinationA, $filename);
+            $user->setAvatar($filename);
+            }
+
+            if ($uploadedbanniere !== null) {
+            $filename2 = $uploadedbanniere->getClientOriginalName();
+            //Retourne le nom du fichier
+            $uploadedbanniere->move($destinationB, $filename2);
+            $user->setBanniere($filename2);
+            }
+        } catch (FileException $e) {
+            dump($e);
+            return new JsonResponse(['message' => 'Erreur lors de l\'upload'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+        
+        // if (null !== $filename) {
+        //     $user->setAvatar($filename);
+        // }
+
+        // if (null !== $filename2) {
+        //     $user->setBanniere($filename2);
+        // }
+
+        $entityManager->persist($user);
+        $entityManager->flush();
+        
+        return new JsonResponse(['message' => 'User updated'], Response::HTTP_OK);
+        
+
+       
+    }
+
 
     #[Route('/user/subscribes', name: 'user_sub', methods: ['POST'])]
     public function subscribes_create(Request $request, EntityManagerInterface $entityManager): Response {

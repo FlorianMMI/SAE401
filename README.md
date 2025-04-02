@@ -82,3 +82,21 @@ Il vous est fortement conseillé de faire un export régulier de l'ensemble des 
 - Frontend : [http://localhost:8090](http://localhost:8090)
 - Backend : [http://localhost:8080](http://localhost:8080)
 - phpMyAdmin : [http://localhost:8070](http://localhost:8070)
+
+
+
+
+
+
+Envoyer les fichier dans /public/image --> Mettre en plus une limite de taille  
+Base de donnée : inserer les chemin /public/image/image.png 
+
+Symfo : 
+
+Postman : dans form-dat a: key = picture
+
+
+
+
+
+

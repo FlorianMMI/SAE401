@@ -13,14 +13,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use App\Entity\User;
 
 class PostController extends AbstractController
 {
     #[Route('/post', name: 'post_list', methods: ['GET'])]
-    public function index(   PostRepository $postRepository, Request $request): Response
+    public function index(  PostRepository $postRepository, Request $request): Response
     {
-      
-
+        
+        
 
         $page = $request->query->get('page', 1);
         $limit = 20;
@@ -29,11 +30,12 @@ class PostController extends AbstractController
 
 
         $posts = iterator_to_array($postRepository->paginateAllOrderedByLatest($offset, $limit));
-        $paginator = ['posts' => array_map(function($post) {
+        $paginator = ['posts' => array_map(function($post)  {
             $blocked = $post->getUser() && $post->getUser()->isblocked();
             $censored = $post->isCensored();
             ;
             return [
+                
                 'id' => $post->getId(),     
                            
                 'message' => $censored
@@ -44,6 +46,11 @@ class PostController extends AbstractController
                 'created_at' => $post->getCreatedAt()
                     ? $post->getCreatedAt()->format('Y-m-d H-i-s')
                     : null,
+                'media' => $censored
+                    ? null
+                    : ($post->getMedia()
+                        ? $post->getMedia()
+                        : null),
                 'likes' => $blocked ? null : ($post->getLikes() ? $post->getLikes()->getLikes() : 0),
                 'user' => $post->getUser() ? [
                     'id' => $post->getUser()->getId(),
@@ -85,8 +92,10 @@ class PostController extends AbstractController
             return [
             'id' => $post->getId(),                
             'message' => $post->getMessage(),
+            
             'created_at' => $post->getCreatedAt() ? $post->getCreatedAt()->format('Y-m-d H-i-s') : null,
             'likes' => $post->getLikes() ? $post->getLikes()->getLikes() : 0,
+            'media' => $post->getMedia() ? $post->getMedia(): null,
             'user' => $post->getUser() ? [
                 'id' => $post->getUser()->getId(),
                 'username' => $post->getUser()->getUsername(),
@@ -148,17 +157,54 @@ class PostController extends AbstractController
     }
 
     #[Route('/posts', name: 'post_create', methods: ['POST'], format: 'json')]
-    public function create(Request $request, PostService $postService, EntityManagerInterface $entityManager): Response{
-
-        $data = json_decode($request->getContent(), true);
-
-        if (empty($data['message'])) {
-            throw new \Exception('Message is required');
+    public function create(Request $request, PostService $postService, EntityManagerInterface $entityManager): Response
+    {
+        // Check if request is multipart/form-data or JSON
+        if (str_contains($request->headers->get('Content-Type'), 'multipart/form-data')) {
+            $message = $request->request->get('message');
+            $mediaFile = $request->files->get('media');
+            
+            if (empty($message)) {
+                throw new \Exception('Message is required');
+            }
+            
+            $filename = null;
+            if ($mediaFile) {
+                $originalFilename = pathinfo($mediaFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = transliterator_transliterate(
+                    'Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()',
+                    $originalFilename
+                );
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$mediaFile->guessExtension();
+                
+                // Move file to public directory
+                try {
+                    $mediaFile->move(
+                        $this->getParameter('kernel.project_dir').'/public/uploads',
+                        $newFilename
+                    );
+                    $filename = $newFilename;
+                } catch (\Exception $e) {
+                    return new JsonResponse(['error' => 'Failed to upload file'], Response::HTTP_INTERNAL_SERVER_ERROR);
+                }
+            }
+           
+            $post = $postService->create($message, $request, $entityManager, $filename);
+            
+            $entityManager->flush(); // Save the changes
+        } else {
+            $data = json_decode($request->getContent(), true);
+            
+            if (empty($data['message'])) {
+                throw new \Exception('Message is required');
+            }
+            
+            $payload = new CreatePostPayload($data['message']);
+            $filename = null;
+            $post = $postService->create($payload->getContent(), $request, $entityManager, $filename);
+            
+            $entityManager->flush(); // Save the changes
         }
-
-        $payload = new CreatePostPayload($data['message']);
-        $post = $postService->create($payload->getContent() ,$request, $entityManager);
-        
         
         return new JsonResponse(['message' => 'Post created'], Response::HTTP_CREATED);
     }
@@ -177,4 +223,6 @@ class PostController extends AbstractController
 
         return new JsonResponse(['message' => 'Post deleted'], Response::HTTP_OK);
     }
+
+    
 }

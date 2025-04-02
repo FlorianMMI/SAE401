@@ -4,15 +4,19 @@ import Likes from "../../ui/likes";
 import Poubelle from "../../ui/poubelle";
 import Modification from "../../ui/modification";
 import { useContext } from "react";
+// Import default avatar image
+import Avatar from "../../assets/Avatar.svg"; // adjust the path as needed
 
 
 
 
 export interface CardTextProps {
     id: number;
+    AUTH? : number;
     userImage: string;
     username: string;
     message: string;
+    media?: string;
     likes: number;
     user_id: number;
 }
@@ -58,11 +62,13 @@ async function isFollowed(user_id: number){
 }
 
 
-export default function Card_text({ userImage, username, message, likes, id, user_id }: CardTextProps) {
+export default function Card_text({ userImage, username, message, likes, id, user_id, media, AUTH }: CardTextProps) {
     
     const [isOwner, setIsOwner] = React.useState<boolean>(false);
     const [isFollowing, setIsFollowed] = React.useState<boolean>(false);
-
+    const [isEditing, setIsEditing] = React.useState<boolean>(false);
+    const [editedMessage, setEditedMessage] = React.useState<string>(message);
+    console.log("media", AUTH);
     React.useEffect(() => {
         async function checkStatus() {
             const [following, connection] = await Promise.all([
@@ -82,7 +88,7 @@ export default function Card_text({ userImage, username, message, likes, id, use
             <div className="flex flex-row items-center justify-start w-full">
                 <img
                 className="w-8 h-8 rounded-full"
-                src={userImage}
+                src={ userImage ? `http://localhost:8080/avatar/${userImage}`: Avatar} 
                 alt="User profile picture"
                 />
                 <p className="text-xl text-warmrasberry ml-2">{username}</p>
@@ -131,7 +137,7 @@ export default function Card_text({ userImage, username, message, likes, id, use
                             >
                                 Ne plus suivre
                             </button>
-                        ) : (
+                        ) : 
                             <button 
                                 className="ml-auto px-4 py-1 bg-warmrasberry text-white rounded-lg text-sm hover:bg-opacity-90 transition-colors"
                                 onClick={async () => {
@@ -176,17 +182,63 @@ export default function Card_text({ userImage, username, message, likes, id, use
                             >
                                 Suivre
                             </button>
-                        )}
+                        }
                     </>
                 )}
             </div>
-            <p className="text-lg text-warmrasberry text-left">
-                {message}
+            <p id="test" className="text-lg text-warmrasberry text-left">
+                {isEditing ? (
+                    <>
+                        <input
+                            type="text"
+                            value={editedMessage}
+                            onChange={(e) => setEditedMessage(e.target.value)}
+                            className="w-full px-2 py-1 border border-warmrasberry rounded-lg"
+                        />
+                        <div className="flex gap-2 mt-2">
+                            <button
+                                className="px-3 py-1 bg-gray-300 text-gray-700 rounded-lg transition-colors hover:bg-gray-400 active:scale-95"
+                                onClick={() => {
+                                    setEditedMessage(message);
+                                    setIsEditing(false);
+                                }}
+                            >
+                                annuler
+                            </button>
+                            <button
+                                className="px-3 py-1 bg-warmrasberry  text-white rounded-lg transition-colors hover:bg-warmrasberry-hover active:scale-95"
+                                onClick={() => {
+                                    console.log("Message modifié:", editedMessage);
+                                    setIsEditing(false);
+                                }}
+                            >
+                                confirmer
+                            </button>
+                        </div>
+                        
+                    </>
+                ) : (
+                    message
+                )}
+            
             </p>
+
+            {media && (
+                <div className="w-full mt-2">
+                    <img 
+                        src={`http://localhost:8080/uploads/${media}`}
+                        alt="Post media"
+                        className="w-full h-auto rounded-lg object-cover max-h-64"
+                        loading="lazy"
+                    />
+                </div>
+            )}
 
             <div className="w-full flex items-center gap-7 justify-start">
                 <Likes count={likes} id={id} />
-                {isOwner && (
+                        <button onClick={() => setIsEditing(true)} style={{ background: 'none', border: 'none', padding: 0 }}>
+                            <Modification />
+                        </button>
                     <>
                         
                         <div
@@ -255,7 +307,7 @@ export default function Card_text({ userImage, username, message, likes, id, use
                             <Poubelle />
                         </div>
                     </>
-                )}
+                
             </div>
             
             </div>

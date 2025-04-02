@@ -12,9 +12,11 @@ export async function loader() {
 }
 
 interface Post {
+  AUTH : number;
   created_at: string;
   id: number;
   likes: number;
+  media?: string;
   user: {
     id: number;
     username: string;
@@ -89,14 +91,14 @@ export default function Home() {
 
   // Auto-refresh toutes les X secondes si activé
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: number;
     if (autoRefresh) {
-      interval = setInterval(() => {
+      interval = window.setInterval(() => {
         refreshFeed();
       }, refreshInterval);
     }
     return () => {
-      if (interval) clearInterval(interval);
+      if (interval) window.clearInterval(interval);
     };
   }, [autoRefresh, refreshFeed]);
 
@@ -171,10 +173,12 @@ export default function Home() {
       <div className="my-12">
         {posts.map((post) => (
           <Card_text
+            AUTH = {post.AUTH}
             key={post.id}
             likes={post.likes}
             id={post.id}
-            user_id={post.user.id}
+            media={post.media}
+            user_id={post.user.id }
             userImage={post.user.image || Avatar}
             username={post.user.username}
             message={post.message}

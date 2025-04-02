@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 class PostService extends AbstractController
 {
     
-    public function create($content, Request $request, EntityManagerInterface $entityManager): Post {
+    public function create($content, Request $request, EntityManagerInterface $entityManager, $filename): Post {
         
             $authHeader = $request->headers->get('Authorization');
             if ($authHeader) {
@@ -33,6 +33,12 @@ class PostService extends AbstractController
         $message->setMessage($content);
         $message->setCreatedAt(new \DateTime());
         $message->setUser($user);
+        $message->setisCensored(false);
+        // Check if a media filename is provided and set it
+       
+        if ($filename !== null) {
+            $message->setMedia($filename);
+        }
         $entityManager->persist($message);
         $entityManager->flush();
 
