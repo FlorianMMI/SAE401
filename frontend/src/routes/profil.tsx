@@ -142,7 +142,7 @@ export default function Profil() {
         formData.append('banniere', 'no_change');
       }
 
-      console.log(formData.get('username'));
+      
       
       // Send PATCH request to update user profile
       const response = await fetch(`http://localhost:8080/userpatch`, {

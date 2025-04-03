@@ -224,5 +224,64 @@ class PostController extends AbstractController
         return new JsonResponse(['message' => 'Post deleted'], Response::HTTP_OK);
     }
 
+    #[Route('/post/patch/{id}', name: 'post_update', methods: ['POST'], format: 'json')]
+    public function patch(int $id, Request $request, PostRepository $postRepository, EntityManagerInterface $entityManager): Response
+    {
+        $post = $postRepository->find($id);
+
+        if (!$post) {
+            return new JsonResponse(['error' => 'Post not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $message = $request->request->get('message');
+        if ($message) {
+            $post->setMessage($message);
+        }
+
+        // Handle media
+        $mediaAction = $request->request->get('media_action');
+        
+        if ($mediaAction === 'delete') {
+            // Delete existing media file if it exists
+            if ($post->getMedia()) {
+            $filePath = $this->getParameter('kernel.project_dir') . '/public/uploads/' . $post->getMedia();
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+            $post->setMedia(null);
+            }
+        } elseif ($mediaFile = $request->files->get('media')) {
+            // Delete old media if exists
+            if ($post->getMedia()) {
+            $oldFilePath = $this->getParameter('kernel.project_dir') . '/public/uploads/' . $post->getMedia();
+            if (file_exists($oldFilePath)) {
+                unlink($oldFilePath);
+            }
+            }
+            
+            // Process and save new media file
+            $originalFilename = pathinfo($mediaFile->getClientOriginalName(), PATHINFO_FILENAME);
+            $safeFilename = transliterator_transliterate(
+            'Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()',
+            $originalFilename
+            );
+            $newFilename = $safeFilename.'-'.uniqid().'.'.$mediaFile->guessExtension();
+            
+            try {
+            $mediaFile->move(
+                $this->getParameter('kernel.project_dir').'/public/uploads',
+                $newFilename
+            );
+            $post->setMedia($newFilename);
+            } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'Failed to upload file'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        $entityManager->flush();
+
+        return new JsonResponse(['message' => 'Post updated'], Response::HTTP_OK);
+    }
+
     
 }

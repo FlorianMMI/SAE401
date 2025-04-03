@@ -7,7 +7,7 @@ import { fetchPost } from '../lib/loaders';
 
 export async function loader() {
   const data = await fetchPost(1);
-  console.log('ceci est post', data);
+  
   return data.posts; // initial posts array (or null)
 }
 
@@ -148,7 +148,7 @@ export default function Home() {
                 }
                 });
                 const data = await response.json();
-                console.log(data.posts);
+                
                 setPosts(data.posts.posts);
               } catch (error) {
                 console.error(error);
