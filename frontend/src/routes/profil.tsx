@@ -91,7 +91,29 @@ export default function Profil() {
   const [localisation, setLocalisation] = useState(user.localisation || '');
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [bannerFile, setBannerFile] = useState<File | null>(null);
+  const [blockedUsers, setBlockedUsers] = useState<any[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showBlockedMenu, setShowBlockedMenu] = useState(false);
+
+  useEffect(() => {
+    if (showBlockedMenu) {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      fetch('http://localhost:8080/blocked', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(response => {
+          if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+          return response.json();
+        })
+        .then(data => setBlockedUsers(data))
+        .catch(error => console.error('Error fetching blocked users:', error));
+    }
+  }, [showBlockedMenu]);
+
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -191,6 +213,73 @@ export default function Profil() {
         <button onClick={() => setShowForm(true)} className="">
           <Modification />
         </button>
+
+        
+        <div className="relative mb-6">
+          <button
+            onClick={() => setShowBlockedMenu(true)}
+            className="px-4 py-2 bg-blue-500 text-white rounded"
+          >
+            Utilisateurs bloqué
+          </button>
+
+          {showBlockedMenu && (
+            <div className="absolute right-0 mt-2 w-64 bg-white border rounded shadow-lg z-10">
+              <div className="flex justify-between items-center p-3 border-b">
+                <h3 className="text-lg font-semibold">Utilisateurs bloqué</h3>
+                <button onClick={() => setShowBlockedMenu(false)} className="text-gray-600">
+                  &times;
+                </button>
+              </div>
+              
+
+             
+              <ul className="max-h-60 overflow-y-auto">
+
+                {blockedUsers.length > 0 ? (
+                  blockedUsers.map((user) => (
+                  <li
+                    key={user.id}
+                    className="flex justify-between items-center px-3 py-2 hover:bg-gray-100"
+                  >
+                    <span>{user.username || user}</span>
+                    <button
+                    onClick={async () => {
+                      const token = localStorage.getItem('token');
+                      if (!token) return;
+                      try {
+                      const response = await fetch(
+                        `http://localhost:8080/unblock/${user.id}`,
+                        {
+                        method: 'POST',
+                        headers: {
+                          'Authorization': `Bearer ${token}`,
+                          'Content-Type': 'application/json',
+                        },
+                        }
+                      );
+                      if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                      }
+                      // Optionally remove the user from the blocked list
+                      setBlockedUsers(blockedUsers.filter((u) => u.id !== user.id));
+                      } catch (error) {
+                      console.error('Error unblocking user:', error);
+                      }
+                    }}
+                    className="text-red-500 hover:text-red-700"
+                    >
+                    &times;
+                    </button>
+                  </li>
+                  ))
+                ) : (
+                  <li className="px-3 py-2">Aucun utilisateur bloqué</li>
+                )}
+              </ul>
+            </div>
+          )}
+        </div>
         
         {showForm && (
         <div className="fixed inset-0 flex items-center justify-center bg-opacity-90 backdrop-blur-sm">

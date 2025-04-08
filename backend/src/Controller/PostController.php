@@ -6,7 +6,9 @@ use App\Repository\PostRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Dto\Payload\CreatePostPayload;
+use App\Entity\Reply;
 use App\Service\PostService;
+use App\Service\ReplyService;
 use Doctrine\ORM\EntityManagerInterface;
 // Removed unused SerializerInterface import.
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,6 +16,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use App\Entity\User;
+use App\Entity\Post;
 
 class PostController extends AbstractController
 {
@@ -26,6 +29,7 @@ class PostController extends AbstractController
         $page = $request->query->get('page', 1);
         $limit = 20;
         $offset = $limit * ($page - 1);
+        
         
 
 
@@ -56,7 +60,6 @@ class PostController extends AbstractController
                     'id' => $post->getUser()->getId(),
                     'username' => $blocked ? "Utilisateur Bloqué par ADMIN" : $post->getUser()->getUsername(),
                     'image' => $post->getUser()->getAvatar(),
-                    
                 ] : null,
             ];
         }, $posts)];
@@ -171,20 +174,18 @@ class PostController extends AbstractController
             $filename = null;
             if ($mediaFile) {
                 $originalFilename = pathinfo($mediaFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = transliterator_transliterate(
-                    'Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()',
-                    $originalFilename
-                );
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$mediaFile->guessExtension();
+                
+                
                 
                 // Move file to public directory
                 try {
                     $mediaFile->move(
                         $this->getParameter('kernel.project_dir').'/public/uploads',
-                        $newFilename
+                        $originalFilename
                     );
-                    $filename = $newFilename;
+                    $filename = $originalFilename;
                 } catch (\Exception $e) {
+                    
                     return new JsonResponse(['error' => 'Failed to upload file'], Response::HTTP_INTERNAL_SERVER_ERROR);
                 }
             }
@@ -282,6 +283,7 @@ class PostController extends AbstractController
 
         return new JsonResponse(['message' => 'Post updated'], Response::HTTP_OK);
     }
+
 
     
 }

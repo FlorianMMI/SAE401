@@ -7,6 +7,7 @@ import Root from './routes/root.tsx';
 import Home, {loader as PostLoader} from './routes/home.tsx';
 import Login from './routes/login.tsx';
 import Profil, {loader as UserLoader} from './routes/profil.tsx';
+import OtherProfil, {loader as OtherUserLoader} from './routes/otherProfil.tsx';
 import Signup from './routes/signup.tsx';
 
 import './index.css';
@@ -34,6 +35,11 @@ const router = createBrowserRouter([
         path: '/profile',
         element: <Profil />,
         loader: UserLoader,
+      },
+      {
+        path : '/otherProfil/:id',
+        element: <OtherProfil />,
+        loader: OtherUserLoader,
       }
     ]
     

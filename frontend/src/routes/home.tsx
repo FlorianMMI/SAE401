@@ -7,12 +7,10 @@ import { fetchPost } from '../lib/loaders';
 
 export async function loader() {
   const data = await fetchPost(1);
-  
   return data.posts; // initial posts array (or null)
 }
 
 interface Post {
-  AUTH : number;
   created_at: string;
   id: number;
   likes: number;
@@ -173,7 +171,6 @@ export default function Home() {
       <div className="my-12">
         {posts.map((post) => (
           <Card_text
-            AUTH = {post.AUTH}
             key={post.id}
             likes={post.likes}
             id={post.id}

@@ -31,6 +31,8 @@ class UserController extends AbstractController
             throw new \Exception('Message is required');
         }
 
+
+
         $payload = new CreateUserPayload($data['password']);
         $data['password'] = $payload->getPassword();
         $post = $UserService->create($data, $entityManager, $userPasswordHasher);
@@ -48,6 +50,7 @@ class UserController extends AbstractController
         }
         
         $result = [
+            'id' => $user->getId(),
             'username' => $user->getUsername(),
             'avatar' => $user->getAvatar(),
             'localisation' => $user->getLocalisation(),
@@ -97,7 +100,7 @@ class UserController extends AbstractController
         $uploadedbanniere = $request->files->get('banniere');
 
 
-
+        
 
         $destinationA = $this->getParameter('kernel.project_dir') . '/public/avatar';
         $destinationB = $this->getParameter('kernel.project_dir') . '/public/banniere';
@@ -154,12 +157,10 @@ class UserController extends AbstractController
             return new JsonResponse(['message' => 'Target user not found'], Response::HTTP_NOT_FOUND);
         }
         
-        // Assuming User entity has methods to manage followers
-        $user->addFollower($targetUser);
-        
-        $entityManager->persist($user);
+        // Sinon, ajouter l'utilisateur comme follower du targetUser
+        $targetUser->addFollower($user);
         $entityManager->flush();
-        return new JsonResponse(['message' => 'Subscription created'], Response::HTTP_CREATED);
+        return new JsonResponse(['message' => 'Abonnement créé'], Response::HTTP_CREATED);
     }
     
     #[Route('/user/unsubscribes', name: 'user_unsub', methods: ['POST'])]
@@ -217,4 +218,4 @@ class UserController extends AbstractController
         return new JsonResponse(['isFollowing' => $isFollowing], Response::HTTP_OK);
     }
     
-} 
+}
