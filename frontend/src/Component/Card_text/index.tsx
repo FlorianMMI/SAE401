@@ -86,7 +86,8 @@ async function isFollowed(user_id: number){
                 },
             });
             const data = await response.json();
-            return data.isFollowing === true;
+            console.log("data" , data)
+            return data.isFollowing == true;
         } catch (error) {
             return false;
         }
@@ -159,100 +160,100 @@ export default function Card_text({ userImage, username, message, likes, id, use
                         <p className="text-xl text-warmrasberry ml-2">{username}</p>
                     </Link>
                     {!isOwner && (
-                        <>
-                            {isFollowing ? (
-                                <button 
-                                    className="ml-auto px-4 py-1 bg-gray-500 text-white rounded-lg text-sm hover:bg-opacity-90 transition-colors"
-                                    onClick={async () => {
-                                        try {
-                                            const token = localStorage.getItem('token');
-                                            if (!token) {
-                                                console.error("User not authenticated");
-                                                return;
-                                            }
-                                            
-                                            const connection = await isconnected();
-                                            if (!connection) {
-                                                console.error("Failed to get user information");
-                                                return;
-                                            }
-                                            
-                                            // Send unfollow request
-                                            const response = await fetch('http://localhost:8080/user/unsubscribes', {
-                                                method: 'POST',
-                                                headers: {
-                                                    "Content-Type": "application/json",
-                                                    "Authorization": `Bearer ${token}`
-                                                },
-                                                body: JSON.stringify({
-                                                    id: connection.user,
-                                                    sub: user_id
-                                                })
-                                            });
-                                            
-                                            if (!response.ok) {
-                                                throw new Error("Failed to unfollow user");
-                                            }
-                                            
-                                            console.log("Successfully unfollowed user");
-                                            window.location.reload();
-                                        } catch (error) {
-                                            console.error("Error unfollowing user:", error);
+                    <>
+                        {isFollowing ? (
+                            <button 
+                                className="ml-auto px-4 py-1 bg-gray-500 text-white rounded-lg text-sm hover:bg-opacity-90 transition-colors"
+                                onClick={async () => {
+                                    try {
+                                        const token = localStorage.getItem('token');
+                                        if (!token) {
+                                            console.error("User not authenticated");
+                                            return;
                                         }
-                                    }}
-                                >
-                                    Ne plus suivre
-                                </button>
-                            ) : 
-                                <button 
-                                    className="ml-auto px-4 py-1 bg-warmrasberry text-white rounded-lg text-sm hover:bg-opacity-90 transition-colors"
-                                    onClick={async () => {
-                                        try {
-                                            const token = localStorage.getItem('token');
-                                            if (!token) {
-                                                console.error("User not authenticated");
-                                                return;
-                                            }
-                                            
-                                            // Get current user id
-                                            const connection = await isconnected();
-                                            if (!connection) {
-                                                console.error("Failed to get user information");
-                                                return;
-                                            }
-                                            
-                                            // Send follow request
-                                            const response = await fetch('http://localhost:8080/user/subscribes', {
-                                                method: 'POST',
-                                                headers: {
-                                                    "Content-Type": "application/json",
-                                                    "Authorization": `Bearer ${token}`
-                                                },
-                                                body: JSON.stringify({
-                                                    id: connection.user,
-                                                    sub: user_id
-                                                })
-                                            });
-                                            
-                                            if (!response.ok) {
-                                                throw new Error("Failed to follow user");
-                                            }
-                                            
-                                            console.log("Successfully followed user");
-                                            setIsFollowed(true);
-                                            
-                                        } catch (error) {
-                                            console.error("Error following user:", error);
+                                        
+                                        const connection = await isconnected();
+                                        if (!connection) {
+                                            console.error("Failed to get user information");
+                                            return;
                                         }
-                                    }}
-                                >
-                                    Suivre
-                                </button>
-                            }
-                        </>
-                    )}
-                </div>
-                <p id="test" className="text-lg text-warmrasberry text-left">
+                                        
+                                        // Send unfollow request
+                                        const response = await fetch('http://localhost:8080/user/unsubscribes', {
+                                            method: 'POST',
+                                            headers: {
+                                                "Content-Type": "application/json",
+                                                "Authorization": `Bearer ${token}`
+                                            },
+                                            body: JSON.stringify({
+                                                id: connection.user,
+                                                sub: user_id
+                                            })
+                                        });
+                                        
+                                        if (!response.ok) {
+                                            throw new Error("Failed to unfollow user");
+                                        }
+                                        
+                                        console.log("Successfully unfollowed user");
+                                        setIsFollowed(false);
+                                    } catch (error) {
+                                        console.error("Error unfollowing user:", error);
+                                    }
+                                }}
+                            >
+                                Ne plus suivre
+                            </button>
+                        ) : (
+                            <button 
+                                className="ml-auto px-4 py-1 bg-warmrasberry text-white rounded-lg text-sm hover:bg-opacity-90 transition-colors"
+                                onClick={async () => {
+                                    try {
+                                        const token = localStorage.getItem('token');
+                                        if (!token) {
+                                            console.error("User not authenticated");
+                                            return;
+                                        }
+                                        
+                                        // Get current user id
+                                        const connection = await isconnected();
+                                        if (!connection) {
+                                            console.error("Failed to get user information");
+                                            return;
+                                        }
+                                        
+                                        // Send follow request
+                                        const response = await fetch('http://localhost:8080/user/subscribes', {
+                                            method: 'POST',
+                                            headers: {
+                                                "Content-Type": "application/json",
+                                                "Authorization": `Bearer ${token}`
+                                            },
+                                            body: JSON.stringify({
+                                                id: connection.user,
+                                                sub: user_id
+                                            })
+                                        });
+                                        
+                                        if (!response.ok) {
+                                            throw new Error("Failed to follow user");
+                                        }
+                                        
+                                        console.log("Successfully followed user");
+                                        setIsFollowed(true);
+                                        
+                                    } catch (error) {
+                                        console.error("Error following user:", error);
+                                    }
+                                }}
+                            >
+                                Suivre
+                            </button>
+                        )}
+                    </>
+                )}
+            </div>
+            <p id="test" className="text-lg text-warmrasberry text-left">
                     {isEditing ? (
                         <>
                             <input
