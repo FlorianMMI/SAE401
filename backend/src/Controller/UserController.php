@@ -157,10 +157,12 @@ class UserController extends AbstractController
             return new JsonResponse(['message' => 'Target user not found'], Response::HTTP_NOT_FOUND);
         }
         
-        // Sinon, ajouter l'utilisateur comme follower du targetUser
-        $targetUser->addFollower($user);
+        // Assuming User entity has methods to manage followers
+        $user->addFollower($targetUser);
+        
+        $entityManager->persist($user);
         $entityManager->flush();
-        return new JsonResponse(['message' => 'Abonnement créé'], Response::HTTP_CREATED);
+        return new JsonResponse(['message' => 'Subscription created'], Response::HTTP_CREATED);
     }
     
     #[Route('/user/unsubscribes', name: 'user_unsub', methods: ['POST'])]
