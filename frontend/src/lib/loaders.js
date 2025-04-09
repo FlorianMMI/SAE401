@@ -1,9 +1,14 @@
 
 
-export async function fetchPost(post){
-    let answer = await fetch(`http://localhost:8080/post?page=${post}`);
-    let temp = await answer.json()
-    return temp.posts
+export async function fetchPost(post) {
+    let token = localStorage.getItem('token');
+    let answer = await fetch(`http://localhost:8080/post?page=${post}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    let temp = await answer.json();
+    return temp.posts;
 }
 
 export async function fetchBlocked(){

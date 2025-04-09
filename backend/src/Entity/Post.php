@@ -36,6 +36,9 @@ class Post
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $media = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $UserBlockedByAuthor = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -136,4 +139,18 @@ class Post
 
         return $this;
     }
+
+    public function isUserBlockedByAuthor(): ?bool
+    {
+        return $this->UserBlockedByAuthor;
+    }
+
+    public function setUserBlockedByAuthor(?bool $UserBlockedByAuthor): static
+    {
+        $this->UserBlockedByAuthor = $UserBlockedByAuthor;
+
+        return $this;
+    }
+
+    
 }

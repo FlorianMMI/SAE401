@@ -11,6 +11,8 @@ export async function loader() {
 }
 
 interface Post {
+  login: number;
+  blockedby: boolean; 
   created_at: string;
   id: number;
   likes: number;
@@ -51,6 +53,7 @@ export default function Home() {
   // posts issus du loader
   const initialPosts = useLoaderData() as Post[];
   const [posts, setPosts] = useState<Post[]>(initialPosts || []);
+  const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -119,7 +122,7 @@ export default function Home() {
   if (posts.length === 0 && loading) {
     return <div className="min-h-screen flex justify-center items-center"><LoadingSpinner /></div>;
   }
-
+  console.log(posts)
   return (
     <>
       <Card_Post />
@@ -136,27 +139,47 @@ export default function Home() {
             </button>
             <button
               onClick={async () => {
-              setPosts([]);
-              setLoading(true);
-              try {
+              if (isFollowing) {
+                // Revenir à tous les posts en utilisant fetchPost
+                setPosts([]);
+                setLoading(true);
+                try {
+                const result = await fetchPost(1);
+                if (result.posts) {
+                  setPosts(result.posts);
+                  setPage(1);
+                  setHasMore(true);
+                }
+                setIsFollowing(false);
+                } catch (error) {
+                console.error(error);
+                } finally {
+                setLoading(false);
+                }
+              } else {
+                // Afficher les posts "following"
+                setPosts([]);
+                setLoading(true);
+                try {
                 const token = localStorage.getItem('token');
                 const response = await fetch('http://localhost:8080/posting/following', {
-                headers: {
+                  headers: {
                   'Authorization': `Bearer ${token}`
-                }
+                  }
                 });
                 const data = await response.json();
-                
                 setPosts(data.posts.posts);
-              } catch (error) {
+                setIsFollowing(true);
+                } catch (error) {
                 console.error(error);
-              } finally {
+                } finally {
                 setLoading(false);
+                }
               }
               }}
-              className="bg-thistlepink  hover:bg-thistlepink-hover text-white py-2 px-4 rounded transition cursor-pointer"
+              className="bg-thistlepink hover:bg-thistlepink-hover text-white py-2 px-4 rounded transition cursor-pointer"
             >
-              Following
+              {isFollowing ? 'Tous les posts' : 'Following'}
             </button>
         </div>
         <label className="flex items-center space-x-2">
@@ -168,9 +191,11 @@ export default function Home() {
           <span>Auto rafraîchissement ({refreshInterval / 1000}s)</span>
         </label>
       </div>
+      
       <div className="my-12">
         {posts.map((post) => (
           <Card_text
+            login = {post.login}
             key={post.id}
             likes={post.likes}
             id={post.id}
@@ -179,6 +204,7 @@ export default function Home() {
             userImage={post.user.image || Avatar}
             username={post.user.username}
             message={post.message}
+            blockedby={post.blockedby}
           />
         ))}
         {loading && posts.length > 0 && <LoadingSpinner />}

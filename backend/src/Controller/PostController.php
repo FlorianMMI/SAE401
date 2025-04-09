@@ -21,7 +21,7 @@ use App\Entity\Post;
 class PostController extends AbstractController
 {
     #[Route('/post', name: 'post_list', methods: ['GET'])]
-    public function index(  PostRepository $postRepository, Request $request): Response
+    public function index(#[CurrentUser()] ?User $Cuser = null, PostRepository $postRepository, Request $request): Response
     {
         
         
@@ -30,16 +30,27 @@ class PostController extends AbstractController
         $limit = 20;
         $offset = $limit * ($page - 1);
         
+
+        
         
 
 
         $posts = iterator_to_array($postRepository->paginateAllOrderedByLatest($offset, $limit));
-        $paginator = ['posts' => array_map(function($post)  {
+        $paginator = ['posts' => array_map(function($post) use ($Cuser)  {
+
+            $test = false;
+            if ($Cuser != null ){
+                
+                if (in_array($Cuser, $post->getUser()->getBlockedUsers()->toArray())) { // Check if user is blocked by author
+                    $test = $post->setUserBlockedByAuthor(true);
+                }
+            }
+
             $blocked = $post->getUser() && $post->getUser()->isblocked();
             $censored = $post->isCensored();
             ;
             return [
-                
+                'login' => $Cuser->getId() ?? -1,
                 'id' => $post->getId(),     
                            
                 'message' => $censored
@@ -56,6 +67,7 @@ class PostController extends AbstractController
                         ? $post->getMedia()
                         : null),
                 'likes' => $blocked ? null : ($post->getLikes() ? $post->getLikes()->getLikes() : 0),
+                'blockedby' => $test ? true : null,
                 'user' => $post->getUser() ? [
                     'id' => $post->getUser()->getId(),
                     'username' => $blocked ? "Utilisateur Bloqué par ADMIN" : $post->getUser()->getUsername(),

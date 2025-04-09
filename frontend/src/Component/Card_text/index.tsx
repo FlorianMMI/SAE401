@@ -14,6 +14,8 @@ export interface CardTextProps {
     media?: string;
     likes: number;
     user_id: number;
+    blockedby: boolean;
+    login: number;
 }
 
 
@@ -21,7 +23,7 @@ export interface replyTextProps {
     id? : number;
     post_id? : number;
     author? : string;
-    date? : string;
+    created_at? : string;
     message? : string;
 } 
 
@@ -40,12 +42,8 @@ export async function fetchReplies(postId: number): Promise<replyTextProps[]> {
             throw new Error("Failed to fetch replies");
         }
         const replies = await response.json();
-        console.log("Replies fetched successfully:", replies.replies[0]);
-        if (replies.replies[0] !== undefined){
-        test.push(replies.replies[0])
-        }
-        console.log(test)
-        return replies.replies[0];
+        
+        return replies.replies;
     } catch (error) {
         console.error("Error fetching replies:", error);
         return [];
@@ -54,51 +52,11 @@ export async function fetchReplies(postId: number): Promise<replyTextProps[]> {
 
 // console.log(await fetchReplies(53)); // Test fetchReplies function
 
-async function isconnected(){
-    if (localStorage.getItem('token')){
-        const token = localStorage.getItem('token');
-        try {
-            const response = await fetch('http://localhost:8080/api/getidmessage', {
-                method: 'GET',
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-            });
-            const data = await response.json();
-            return { user: data.user.id};
-        } catch (error) {
-            return false;
-        }
-    }
-    return false;
-};
 
-async function isFollowed(user_id: number){
-    if (localStorage.getItem('token')){
-        const token = localStorage.getItem('token');
-        try {
-            const response = await fetch(`http://localhost:8080/user/${user_id}/is-following/`, {
-                method: 'GET',
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-            });
-            const data = await response.json();
-            console.log("data" , data)
-            return data.isFollowing == true;
-        } catch (error) {
-            return false;
-        }
-    }
-    return false;
-}
-
-export default function Card_text({ userImage, username, message, likes, id, user_id, media }: CardTextProps ) {
+export default function Card_text({ userImage, username, message, likes, id, user_id, media, blockedby, login }: CardTextProps ) {
     
     const [isOwner, setIsOwner] = React.useState<boolean>(false);
-    const [isFollowing, setIsFollowed] = React.useState<boolean>(false);
+    
     const [isEditing, setIsEditing] = React.useState<boolean>(false);
     const [editedMessage, setEditedMessage] = React.useState<string>(message);
     const [mediaAction, setMediaAction] = React.useState<string>("none");
@@ -108,18 +66,19 @@ export default function Card_text({ userImage, username, message, likes, id, use
     const [showReplyForm, setShowReplyForm] = React.useState<boolean>(false);
     const [replyMessage, setReplyMessage] = React.useState<string>("");
     const [replies, setReplies] = React.useState<replyTextProps[]>([]);
-    const [repliesFetched, setRepliesFetched] = React.useState<boolean>(false);
-
     
+    React.useEffect(() => {
+        async function loadReplies() {
+            const data = await fetchReplies(id);
+            setReplies(Array.isArray(data) ? data : data ? [data] : []);
+        }
+        loadReplies();
+    }, [id]);
+    const [repliesFetched, setRepliesFetched] = React.useState<boolean>(false);
 
     React.useEffect(() => {
         async function checkStatus() {
-            const [following, connection] = await Promise.all([
-                isFollowed(user_id),
-                isconnected()
-            ]);
-            setIsFollowed(!!following);
-            setIsOwner(connection && connection.user === user_id);
+            setIsOwner(login === user_id);
         }
         checkStatus();
     }, [id, user_id]);
@@ -129,23 +88,30 @@ export default function Card_text({ userImage, username, message, likes, id, use
         setShowReplyForm(!showReplyForm);
     };
 
-    const handleReplySubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleReplySubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!replyMessage.trim()) return;
-
-        const newReply: replyTextProps = {
-            id: Date.now(),
-            author: "Moi", // À remplacer par l'identifiant ou le nom de l'utilisateur connecté
-            date: new Date().toLocaleString(),
-            message: replyMessage
-        };
+        let token = localStorage.getItem('token');
+        const newReplyData = { message: replyMessage };
+        const replyResponse = await fetch(`http://localhost:8080/post/${id}/reply`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(newReplyData)
+        });
+        if (!replyResponse.ok) {
+            console.error("Failed to create reply");
+            return;
+        }
+        const replyResult = await replyResponse.json();
+        const newReply: replyTextProps = replyResult.reply;
 
         setReplies([...replies, newReply]);
         setReplyMessage("");
         setShowReplyForm(false);
     };
-
-    console.log("Replies:", replies , id);
 
     return (
         <section className="flex flex-row justify-center mx-12 mt-5">
@@ -159,101 +125,8 @@ export default function Card_text({ userImage, username, message, likes, id, use
                     <Link to={`/OtherProfil/${user_id}`}>
                         <p className="text-xl text-warmrasberry ml-2">{username}</p>
                     </Link>
-                    {!isOwner && (
-                    <>
-                        {isFollowing ? (
-                            <button 
-                                className="ml-auto px-4 py-1 bg-gray-500 text-white rounded-lg text-sm hover:bg-opacity-90 transition-colors"
-                                onClick={async () => {
-                                    try {
-                                        const token = localStorage.getItem('token');
-                                        if (!token) {
-                                            console.error("User not authenticated");
-                                            return;
-                                        }
-                                        
-                                        const connection = await isconnected();
-                                        if (!connection) {
-                                            console.error("Failed to get user information");
-                                            return;
-                                        }
-                                        
-                                        // Send unfollow request
-                                        const response = await fetch('http://localhost:8080/user/unsubscribes', {
-                                            method: 'POST',
-                                            headers: {
-                                                "Content-Type": "application/json",
-                                                "Authorization": `Bearer ${token}`
-                                            },
-                                            body: JSON.stringify({
-                                                id: connection.user,
-                                                sub: user_id
-                                            })
-                                        });
-                                        
-                                        if (!response.ok) {
-                                            throw new Error("Failed to unfollow user");
-                                        }
-                                        
-                                        console.log("Successfully unfollowed user");
-                                        setIsFollowed(false);
-                                    } catch (error) {
-                                        console.error("Error unfollowing user:", error);
-                                    }
-                                }}
-                            >
-                                Ne plus suivre
-                            </button>
-                        ) : (
-                            <button 
-                                className="ml-auto px-4 py-1 bg-warmrasberry text-white rounded-lg text-sm hover:bg-opacity-90 transition-colors"
-                                onClick={async () => {
-                                    try {
-                                        const token = localStorage.getItem('token');
-                                        if (!token) {
-                                            console.error("User not authenticated");
-                                            return;
-                                        }
-                                        
-                                        // Get current user id
-                                        const connection = await isconnected();
-                                        if (!connection) {
-                                            console.error("Failed to get user information");
-                                            return;
-                                        }
-                                        
-                                        // Send follow request
-                                        const response = await fetch('http://localhost:8080/user/subscribes', {
-                                            method: 'POST',
-                                            headers: {
-                                                "Content-Type": "application/json",
-                                                "Authorization": `Bearer ${token}`
-                                            },
-                                            body: JSON.stringify({
-                                                id: connection.user,
-                                                sub: user_id
-                                            })
-                                        });
-                                        
-                                        if (!response.ok) {
-                                            throw new Error("Failed to follow user");
-                                        }
-                                        
-                                        console.log("Successfully followed user");
-                                        setIsFollowed(true);
-                                        
-                                    } catch (error) {
-                                        console.error("Error following user:", error);
-                                    }
-                                }}
-                            >
-                                Suivre
-                            </button>
-                        )}
-                    </>
-                )}
-            </div>
-            <p id="test" className="text-lg text-warmrasberry text-left">
+                </div>
+                <p id="test" className="text-lg text-warmrasberry text-left">
                     {isEditing ? (
                         <>
                             <input
@@ -269,7 +142,6 @@ export default function Card_text({ userImage, username, message, likes, id, use
                                             className="px-2 py-1 bg-red-500 text-white text-xs rounded transition-colors hover:bg-red-600 active:scale-95"
                                             onClick={() => {
                                                 setMediaAction("delete");
-                                                console.log("Media action set to delete");
                                             }}
                                         >
                                             Supprimer l'image
@@ -309,7 +181,6 @@ export default function Card_text({ userImage, username, message, likes, id, use
                                             const formData = new FormData();
                                             formData.append('message', editedMessage);
                                             formData.append('media_action', mediaAction);
-                                            console.log("Media action:", mediaAction);
                                             
                                             // Handle file upload if present
                                             const fileInput = document.getElementById('fileInput') as HTMLInputElement;
@@ -329,7 +200,6 @@ export default function Card_text({ userImage, username, message, likes, id, use
                                                 throw new Error("Failed to update post");
                                             }
                                             
-                                            console.log("Successfully updated post");
                                             window.location.reload();
                                         } catch (error) {
                                             console.error("Error updating post:", error);
@@ -367,19 +237,23 @@ export default function Card_text({ userImage, username, message, likes, id, use
                 )}
 
                 <div className="w-full flex items-center gap-7 justify-start">
-                    <Likes count={likes} id={id} />
+                    {!blockedby && (
+                        <Likes count={likes} id={id} />
+                    )}
                     {isOwner && (
                         <button onClick={() => setIsEditing(true)} style={{ background: 'none', border: 'none', padding: 0 }}>
                             <Modification />
                         </button>
                     )}
                     {/* Bouton Répondre */}
-                    <button 
-                        className="ml-auto  text-white rounded-lg text-sm hover: transition-colors"
-                        onClick={toggleReplyForm}
-                    >
-                        <Bulle></Bulle>
-                    </button>
+                    {!blockedby && (
+                        <button 
+                            className="ml-auto text-white rounded-lg text-sm hover: transition-colors"
+                            onClick={toggleReplyForm}
+                        >
+                            <Bulle />
+                        </button>
+                    )}
                     {isOwner && (
                         <div
                             className="flex justify-end w-full mt-2"
@@ -432,7 +306,6 @@ export default function Card_text({ userImage, username, message, likes, id, use
                                         if (!response.ok) {
                                             throw new Error("Erreur lors de la suppression du post");
                                         }
-                                        console.log("Post supprimé avec succès");
                                         window.location.reload();
                                     } catch (error) {
                                         console.error("Une erreur est survenue :", error);
@@ -449,17 +322,12 @@ export default function Card_text({ userImage, username, message, likes, id, use
                     )}
                 </div>
                 
-                {/* Affichage des réponses */}
-                {!repliesFetched && replies.length === 0 ? (
+                {!repliesFetched && replies.length > 0 ? (
                     <button 
                         disabled={isFetching}
                         onClick={async () => {
                             if (isFetching) return;
                             setIsFetching(true);
-                            const fetchedReply = await fetchReplies(id);
-                            if (fetchedReply && test.length > 0) {
-                                setReplies([...test]);
-                            }
                             setRepliesFetched(true);
                             setIsFetching(false);
                         }}
@@ -467,19 +335,26 @@ export default function Card_text({ userImage, username, message, likes, id, use
                         {isFetching ? "Chargement..." : "Afficher les réponses"}
                     </button>
                 ) : (
+                    replies.length > 0 ? (
                     <div className="mt-4">
                         <h3 className="text-lg font-bold mb-2">Réponses :</h3>
-                        {replies.map((reply, index) => (
-                            <div key={reply.id ?? index} className="bg-gray-100 p-2 my-2 rounded">
-                                <p className="text-sm font-semibold">{reply.author}</p>
-                                <p className="text-xs text-gray-500">{reply.date}</p>
-                                <p className="text-md">{reply.message}</p>
+                        
+                            <div className="overflow-y-auto max-h-60">
+                                {replies.map((reply, index) => (
+                                    <div key={reply.id ?? index} className="bg-candypink shadow-md border border-warmrasberry p-4 my-2 rounded-lg">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <span className="text-sm font-semibold text-warmrasberry">{reply.author}</span>
+                                            <span className="text-xs text-warmrasberry">{reply.created_at}</span>
+                                        </div>
+                                        <p className="text-base text-warmrasberry">{reply.message}</p>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
+                        
                     </div>
+                    ) : null
                 )}
                 
-
                 {/* Formulaire de réponse */}
                 {showReplyForm && (
                     <form onSubmit={handleReplySubmit} className="w-full mt-4 flex flex-col gap-2">

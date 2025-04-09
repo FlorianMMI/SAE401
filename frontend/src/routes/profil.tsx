@@ -67,6 +67,7 @@ interface Post {
   id: number;
   likes: number;
   media?: string;
+  blockedby: boolean;
   user: {
     id: number;
     image?: string;
@@ -372,6 +373,7 @@ export default function Profil() {
             userImage={post.user.image ? `http://localhost:8080/avatar/${post.user.image}` : Avatar}
             username={post.user.username}
             message={post.message}
+            blockedby= {post.blockedby}
           />
         ))}
       </div>
