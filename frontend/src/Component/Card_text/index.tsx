@@ -32,7 +32,7 @@ let test: replyTextProps[] = []
 
 export async function fetchReplies(postId: number): Promise<replyTextProps[]> {
     try {
-        const response = await fetch(`http://localhost:8080/post/${postId}/reply`, {
+        const response = await fetch(import.meta.env.VITE_URL + `/post/${postId}/reply`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -50,7 +50,6 @@ export async function fetchReplies(postId: number): Promise<replyTextProps[]> {
     }
 }
 
-// console.log(await fetchReplies(53)); // Test fetchReplies function
 
 
 export default function Card_text({ userImage, username, message, likes, id, user_id, media, blockedby, login }: CardTextProps ) {
@@ -93,7 +92,7 @@ export default function Card_text({ userImage, username, message, likes, id, use
         if (!replyMessage.trim()) return;
         let token = localStorage.getItem('token');
         const newReplyData = { message: replyMessage };
-        const replyResponse = await fetch(`http://localhost:8080/post/${id}/reply`, {
+        const replyResponse = await fetch(import.meta.env.VITE_URL + `/post/${id}/reply`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -119,7 +118,7 @@ export default function Card_text({ userImage, username, message, likes, id, use
                 <div className="flex flex-row items-center justify-start w-full">
                     <img
                         className="w-8 h-8 rounded-full"
-                        src={ userImage ? `http://localhost:8080/avatar/${userImage}` : Avatar}
+                        src={ userImage ? import.meta.env.VITE_URL + `/avatar/${userImage}` : Avatar}
                         alt="User profile picture"
                     />
                     <Link to={`/OtherProfil/${user_id}`}>
@@ -188,7 +187,7 @@ export default function Card_text({ userImage, username, message, likes, id, use
                                                 formData.append('media', fileInput.files[0]);
                                             }
                                             
-                                            const response = await fetch(`http://localhost:8080/post/patch/${id}`, {
+                                            const response = await fetch(import.meta.env.VITE_URL + `/post/patch/${id}`, {
                                                 method: 'POST',
                                                 headers: {
                                                     "Authorization": `Bearer ${token}`
@@ -222,12 +221,12 @@ export default function Card_text({ userImage, username, message, likes, id, use
                         {media.endsWith(".mp4") ? (
                             <video
                                 controls
-                                src={`http://localhost:8080/uploads/${media}`}
+                                src={import.meta.env.VITE_URL + `/uploads/${media}`}
                                 className="w-full h-auto rounded-lg object-cover max-h-64"
                             />
                         ) : (
                             <img 
-                                src={`http://localhost:8080/uploads/${media}`}
+                                src={import.meta.env.VITE_URL + `/uploads/${media}`}
                                 alt="Post media"
                                 className="w-full h-auto rounded-lg object-cover max-h-64"
                                 loading="lazy"
@@ -300,7 +299,7 @@ export default function Card_text({ userImage, username, message, likes, id, use
                                 confirmBtn.onclick = async () => {
                                     document.body.removeChild(tempDiv);
                                     try {
-                                        const response = await fetch(`http://localhost:8080/post/${id}`, {
+                                        const response = await fetch(import.meta.env.VITE_URL + `/post/${id}`, {
                                             method: "DELETE",
                                         });
                                         if (!response.ok) {

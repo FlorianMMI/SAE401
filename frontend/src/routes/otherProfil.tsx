@@ -6,6 +6,8 @@ import ProfilData from '../Component/Profil_Data';
 import Card_text from '../Component/Card_text';
 import Avatar from '../assets/Avatar.svg';
 
+
+
 interface User {
   id: number;
   username: string;
@@ -14,6 +16,7 @@ interface User {
   localisation?: string;
   siteweb?: string;
   bio?: string;
+  login:number;
 }
 
 interface Post {
@@ -39,11 +42,11 @@ interface Blocked {
 
 export async function loader({ params }: { params: Params<string> }) {
   const userId = params.id;
-  console.log(userId);
+  
   const user = await fetchuser(userId);
   const blocked = await fetchBlocked();
   const posts = await fetchPostId(userId);
-  console.log(user);
+  
   return { datas: user, posts, blocked };
 }
 
@@ -61,7 +64,7 @@ export default function OtherProfil() {
   // Fetch current user ID
   useEffect(() => {
     if (token) {
-      fetch('http://localhost:8080/api/getidmessage', { headers: { 'Authorization': `Bearer ${token}` }})
+      fetch(import.meta.env.VITE_URL + `/api/getidmessage`, { headers: { 'Authorization': `Bearer ${token}` }})
         .then(res => res.json())
         .then(data => {
           if(data.user && data.user.id) {
@@ -75,7 +78,7 @@ export default function OtherProfil() {
   // Check follow status
   useEffect(() => {
     if (token && currentUserId !== null) {
-      fetch(`http://localhost:8080/user/${user.id}/is-following`, { headers: { 'Authorization': `Bearer ${token}` }})
+      fetch(import.meta.env.VITE_URL + `/user/${user.id}/is-following`, { headers: { 'Authorization': `Bearer ${token}` }})
         .then(res => res.json())
         .then(data => setIsFollowing(data.isFollowing))
         .catch(err => console.error(err));
@@ -85,7 +88,7 @@ export default function OtherProfil() {
   const toggleFollow = () => {
     if (!token || currentUserId === null) return;
     const endpoint = isFollowing ? '/user/unsubscribes' : '/user/subscribes';
-    fetch(`http://localhost:8080${endpoint}`, {
+    fetch(import.meta.env.VITE_URL + `${endpoint}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify({ id: currentUserId, sub: user.id })
@@ -108,8 +111,8 @@ export default function OtherProfil() {
     <>
       <div className="flex flex-col items-center justify-center min-h-screen">
         <ProfileHeader 
-          avatar={user.avatar ? `http://localhost:8080/avatar/${user.avatar}` : Avatar}
-          images={user.banniere ? `http://localhost:8080/banniere/${user.banniere}` : Avatar}
+          avatar={user.avatar ? import.meta.env.VITE_URL + `/avatar/${user.avatar}` : Avatar}
+          images={user.banniere ? import.meta.env.VITE_URL + `/banniere/${user.banniere}` : Avatar}
         />
         <ProfilData 
           username={user.username}
@@ -121,10 +124,10 @@ export default function OtherProfil() {
         <div className="my-5 flex gap-4">
           <button
             onClick={() => {
-              console.log("Blocage de l'utilisateur", user.id);
+          
               const endpoint = isBlocked
-                ? `http://localhost:8080/unblock/${user.id}`
-                : `http://localhost:8080/block/${user.id}`;
+                ? import.meta.env.VITE_URL + `/unblock/${user.id}`
+                : import.meta.env.VITE_URL + `/block/${user.id}`;
               fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` }
@@ -153,12 +156,13 @@ export default function OtherProfil() {
             key={post.id}
             likes={post.likes}
             id={post.id}
-            media={post.media ? `http://localhost:8080/uploads/${post.media}` : undefined}
+            media={post.media ? import.meta.env.VITE_URL + `/uploads/${post.media}` : undefined}
             user_id={post.user.id}
-            userImage={post.user.image ? `http://localhost:8080/avatar/${post.user.image}` : Avatar}
+            userImage={post.user.image ? import.meta.env.VITE_URL + `/avatar/${post.user.image}` : Avatar}
             username={post.user.username}
             message={post.message}
             blockedby= {post.blockedby}
+            login={user.login}
           />
         ))}
       </div>

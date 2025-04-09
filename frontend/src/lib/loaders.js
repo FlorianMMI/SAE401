@@ -1,8 +1,9 @@
 
 
 export async function fetchPost(post) {
+    
     let token = localStorage.getItem('token');
-    let answer = await fetch(`http://localhost:8080/post?page=${post}`, {
+    let answer = await fetch(import.meta.env.VITE_URL + `/post?page=${post}`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }
@@ -13,7 +14,7 @@ export async function fetchPost(post) {
 
 export async function fetchBlocked(){
     let token = localStorage.getItem('token')
-    let answer = await fetch(`http://localhost:8080/blocked`, {
+    let answer = await fetch(import.meta.env.VITE_URL + `/blocked`, {
         headers: {
             'Authorization': `Bearer ${token}` // Include the token in the Authorization header
         }
@@ -25,14 +26,14 @@ export async function fetchBlocked(){
 
 
 export async function fetchuser(id){
-    let answer = await fetch(`http://localhost:8080/user/${id}`);
+    let answer = await fetch(import.meta.env.VITE_URL + `/user/${id}`);
     let temp = await answer.json()
     
     return temp
 }
 
 export async function fetchPostId(id){
-    let answer = await fetch(`http://localhost:8080/post/${id}`);
+    let answer = await fetch(import.meta.env.VITE_URL + `/post/${id}`);
     let temp = await answer.json()
     return temp
 }

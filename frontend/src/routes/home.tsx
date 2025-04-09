@@ -122,7 +122,7 @@ export default function Home() {
   if (posts.length === 0 && loading) {
     return <div className="min-h-screen flex justify-center items-center"><LoadingSpinner /></div>;
   }
-  console.log(posts)
+  
   return (
     <>
       <Card_Post />

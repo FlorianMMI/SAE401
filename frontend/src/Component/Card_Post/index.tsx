@@ -11,7 +11,7 @@ export async function sendPost(message: string, mediaFile?: File): Promise<void>
         const formData = new FormData();
         formData.append("message", message);
         formData.append("media", mediaFile);
-        response = await fetch("http://localhost:8080/posts", {
+        response = await fetch(import.meta.env.VITE_URL + `/posts`, {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${token}`
@@ -19,7 +19,7 @@ export async function sendPost(message: string, mediaFile?: File): Promise<void>
             body: formData,
         });
     } else {
-        response = await fetch("http://localhost:8080/posts", {
+        response = await fetch(import.meta.env.VITE_URL + `/posts`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

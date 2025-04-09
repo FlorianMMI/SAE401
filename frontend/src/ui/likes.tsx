@@ -14,7 +14,7 @@ const Likes: React.FC<LikesProps> = ({ count: initialCount, id: id }) => {
         console.log('id:', id);
         if (liked) {
             setLiked(false);
-            fetch(`http://localhost:8080/like/${id}`, {
+            fetch(import.meta.env.VITE_URL + `/like/${id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -32,7 +32,7 @@ const Likes: React.FC<LikesProps> = ({ count: initialCount, id: id }) => {
               .catch(error => console.error('Error removing like:', error));
         } else {
             setLiked(true); 
-            fetch(`http://localhost:8080/like/${id}`, {
+            fetch(import.meta.env.VITE_URL + `/like/${id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

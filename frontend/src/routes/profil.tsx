@@ -19,7 +19,7 @@ export async function fetchCurrentUser() {
       'Content-Type': 'application/json',
     };
     
-    const response = await fetch('http://localhost:8080/api/getidmessage', {
+    const response = await fetch(import.meta.env.VITE_URL + `/api/getidmessage`, {
       headers: headers
     });
     
@@ -100,7 +100,7 @@ export default function Profil() {
     if (showBlockedMenu) {
       const token = localStorage.getItem('token');
       if (!token) return;
-      fetch('http://localhost:8080/blocked', {
+      fetch(import.meta.env.VITE_URL + `/blocked`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -168,7 +168,7 @@ export default function Profil() {
       
       
       // Send PATCH request to update user profile
-      const response = await fetch(`http://localhost:8080/userpatch`, {
+      const response = await fetch(import.meta.env.VITE_URL + `/userpatch`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -184,7 +184,7 @@ export default function Profil() {
       }
       
       const responseData = await response.json();
-      console.log('Profile updated successfully:', responseData);
+      
       
       // Close the form and refresh the page to show updated data
       setShowForm(false);
@@ -201,8 +201,8 @@ export default function Profil() {
     <>
       <div className="flex flex-col items-center justify-center min-h-screen">
         <ProfileHeader 
-          avatar={user.avatar ? `http://localhost:8080/avatar/${user.avatar}` : Avatar}
-          images = {user.banniere ? `http://localhost:8080/banniere/${user.banniere}` : Avatar}
+          avatar={user.avatar ? import.meta.env.VITE_URL + `/avatar/${user.avatar}` : Avatar}
+          images = {user.banniere ? import.meta.env.VITE_URL + `/banniere/${user.banniere}` : Avatar}
         />
         <ProfilData 
           username={user.username}
@@ -250,7 +250,7 @@ export default function Profil() {
                       if (!token) return;
                       try {
                       const response = await fetch(
-                        `http://localhost:8080/unblock/${user.id}`,
+                        import.meta.env.VITE_URL + `/unblock/${user.id}`,
                         {
                         method: 'POST',
                         headers: {
@@ -368,9 +368,9 @@ export default function Profil() {
             key={post.id}
             likes={post.likes}
             id={post.id}
-            media = {post.media ? `http://localhost:8080/uploads/${post.media}` : undefined}
+            media = {post.media ? import.meta.env.VITE_URL + `/uploads/${post.media}` : undefined}
             user_id={post.user.id}
-            userImage={post.user.image ? `http://localhost:8080/avatar/${post.user.image}` : Avatar}
+            userImage={post.user.image ? import.meta.env.VITE_URL + `/avatar/${post.user.image}` : Avatar}
             username={post.user.username}
             message={post.message}
             blockedby= {post.blockedby}

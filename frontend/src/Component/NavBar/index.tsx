@@ -32,7 +32,7 @@ export default function NavBar() {
             <div className="text-base">
                 <Link
                     className="text-warmrasberry hover:text-warmrasberry-hover"
-                    to={isAdmin() ? "http://localhost:8080/admin" : "/"}
+                    to={isAdmin() ? import.meta.env.VITE_URL + `/admin` : "/"}
                 >
                     SocialName
                 </Link>
