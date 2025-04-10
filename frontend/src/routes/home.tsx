@@ -6,7 +6,7 @@ import Avatar from '../assets/Avatar.svg';
 import { fetchPost } from '../lib/loaders';
 
 if (!localStorage.getItem('token')) {
-  window.location.href = '/signup';
+  window.location.href = import.meta.env.BASE_URL + '/signup';
 }
 
 
