@@ -1,16 +1,20 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import {Navigate, redirect} from 'react-router-dom';
 import Card_text from '../Component/Card_text';
 import Card_Post from '../Component/Card_Post';
 import { useLoaderData } from 'react-router-dom';
 import Avatar from '../assets/Avatar.svg';
 import { fetchPost } from '../lib/loaders';
 
-if (!localStorage.getItem('token')) {
-  window.location.href = import.meta.env.VITE_SURL + '/signup';
-}
+
+
+
 
 
 export async function loader() {
+  if (!localStorage.getItem('token')) {
+    return redirect("login"); 
+   }
   const data = await fetchPost(1);
   return data.posts; // initial posts array (or null)
 }
@@ -57,6 +61,8 @@ function LoadingSpinner() {
 }
 
 export default function Home() {
+
+
   // posts issus du loader
   const initialPosts = useLoaderData() as Post[];
   const [posts, setPosts] = useState<Post[]>(initialPosts || []);

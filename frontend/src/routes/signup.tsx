@@ -1,6 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, redirect } from 'react-router-dom';
 import Button from '../ui/button';
+
 
 export default function Signup() {
   const [username, setUsername] = React.useState('');
@@ -99,7 +100,7 @@ export default function Signup() {
       }
       // Vous pouvez gérer ici la redirection ou un message de succès
       console.log('Utilisateur inscrit avec succès');
-      window.location.href = '/login';
+      return redirect('login')
     } catch (error) {
       console.error(error);
       setSubmitError('Une erreur est survenue lors de l\'inscription.');

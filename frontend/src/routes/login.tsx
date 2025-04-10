@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, redirect } from 'react-router-dom';
 import Button from '../ui/button';
 
 export default function Login() {
@@ -11,7 +11,7 @@ export default function Login() {
     e.preventDefault();
     try {
       
-      const response = await fetch('http://localhost:8080/api/login', {
+      const response = await fetch( import.meta.env.VITE_URL + `/api/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email.toString() , password: password.toString() }),
@@ -20,7 +20,7 @@ export default function Login() {
         const data = await response.json();
         const token = data.token;
         localStorage.setItem('token', token);
-        window.location.href = '/';
+        return redirect('');
       } else {
         console.error('Erreur lors de la connexion:', response.status);
       }
@@ -68,7 +68,7 @@ export default function Login() {
             <button type="submit" className="px-4 py-3 bg-warmrasberry text-white rounded">
               Connexion
             </button>
-            <Link to="/signup">
+            <Link to= {import.meta.env.BASE_URL + "signup"}>
               <Button type="button" variant="secondary">
                 S'inscrire ?
               </Button>
