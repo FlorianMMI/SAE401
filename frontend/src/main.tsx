@@ -15,29 +15,29 @@ import './index.css';
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: import.meta.env.BASE_URL,
     element: <Root />,
     children: [
       {
-        path: '/',
+        path: import.meta.env.BASE_URL,
         element: <Home />,
         loader: PostLoader, 
       },
       {
-        path: '/login',
+        path: `${import.meta.env.BASE_URL}/login`,
         element: <Login />,
       },
       {
-        path: '/signup',
+        path: `${import.meta.env.BASE_URL}/signup`,
         element: <Signup />,
       },
       {
-        path: '/profile',
+        path: `${import.meta.env.BASE_URL}/profile`,
         element: <Profil />,
         loader: UserLoader,
       },
       {
-        path : '/otherProfil/:id',
+        path : `${import.meta.env.BASE_URL}/otherProfil/:id`,
         element: <OtherProfil />,
         loader: OtherUserLoader,
       }
