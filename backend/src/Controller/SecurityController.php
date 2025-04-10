@@ -13,7 +13,7 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Online;
-
+use phpDocumentor\Reflection\Types\Boolean;
 
 class SecurityController extends AbstractController
 {
@@ -70,9 +70,9 @@ class SecurityController extends AbstractController
             ],
         ]);
     }
-    
+
     #[Route('/api/getrole', name: 'admin', methods: ['get'], format: 'json')]
-    private function isAdmin(?User $currentuser): ?Response
+    private function isAdmin(?User $currentuser): ?JsonResponse
     {
         if (!$currentuser) {
             return $this->json(['error' => 'Unauthorized 1'], Response::HTTP_FORBIDDEN);

@@ -121,7 +121,7 @@ export default function Card_text({ userImage, username, message, likes, id, use
                         src={ userImage ? import.meta.env.VITE_URL + `/avatar/${userImage}` : Avatar}
                         alt="User profile picture"
                     />
-                    <Link to={`/OtherProfil/${user_id}`}>
+                    <Link to={import.meta.env.BASE_URL + `/OtherProfil/${user_id}`}>
                         <p className="text-xl text-warmrasberry ml-2">{username}</p>
                     </Link>
                 </div>
