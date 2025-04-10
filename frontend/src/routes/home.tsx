@@ -5,10 +5,17 @@ import { useLoaderData } from 'react-router-dom';
 import Avatar from '../assets/Avatar.svg';
 import { fetchPost } from '../lib/loaders';
 
+if (!localStorage.getItem('token')) {
+  window.location.href = '/signup';
+}
+
+
 export async function loader() {
   const data = await fetchPost(1);
   return data.posts; // initial posts array (or null)
 }
+
+
 
 interface Post {
   login: number;

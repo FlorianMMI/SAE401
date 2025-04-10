@@ -24,7 +24,6 @@ class PostController extends AbstractController
     public function index(#[CurrentUser()] ?User $Cuser = null, PostRepository $postRepository, Request $request): Response
     {
         
-        
 
         $page = $request->query->get('page', 1);
         $limit = 20;
