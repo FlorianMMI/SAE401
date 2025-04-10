@@ -21,7 +21,7 @@ export default function NavBar() {
             <div className="text-base">
                 {localStorage.getItem('token') ? (
                     <Link
-                        to="/login"
+                        to={`${import.meta.env.VITE_SURL}/login`}
                         className="text-warmrasberry hover:text-warmrasberry-hover"
                         
                         onClick={() => {
@@ -34,7 +34,7 @@ export default function NavBar() {
                     </Link>
                 ) : (
                     <Link
-                        to="/login"
+                        to={`${import.meta.env.VITE_SURL}/login`}
                         className="text-warmrasberry hover:text-warmrasberry-hover"
                     >
                         Connexion
