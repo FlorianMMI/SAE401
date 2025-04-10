@@ -68,6 +68,7 @@ interface Post {
   likes: number;
   media?: string;
   blockedby: boolean;
+  login: number;
   user: {
     id: number;
     image?: string;
@@ -374,6 +375,7 @@ export default function Profil() {
             username={post.user.username}
             message={post.message}
             blockedby= {post.blockedby}
+            login = {post.login}
           />
         ))}
       </div>

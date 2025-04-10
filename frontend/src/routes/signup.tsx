@@ -2,7 +2,6 @@ import React from 'react';
 import { Link, redirect } from 'react-router-dom';
 import Button from '../ui/button';
 
-
 export default function Signup() {
   const [username, setUsername] = React.useState('');
   const [email, setEmail] = React.useState('');
@@ -174,7 +173,7 @@ export default function Signup() {
         <button className="bg-warmrasberry text-white px-4 py-2 rounded" type="submit">
                         S'inscrire
         </button>
-          <Link to="/login">
+          <Link to= {import.meta.env.BASE_URL + "/login"}>
             <Button type="button" variant="secondary">
               Déjà un compte ?
             </Button>
