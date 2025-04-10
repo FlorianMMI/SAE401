@@ -70,13 +70,14 @@ class SecurityController extends AbstractController
             ],
         ]);
     }
-
+    
+    #[Route('/api/getrole', name: 'admin', methods: ['get'], format: 'json')]
     private function isAdmin(?User $currentuser): ?Response
     {
         if (!$currentuser) {
             return $this->json(['error' => 'Unauthorized 1'], Response::HTTP_FORBIDDEN);
         }
-        if (!in_array('Role_admin', $currentuser->getRoles())) {
+        if (!in_array('ROLE_ADMIN', $currentuser->getRoles())) {
             return $this->json(['error' => 'Unauthorized 2'], Response::HTTP_FORBIDDEN);
         }
         return null;
