@@ -71,7 +71,6 @@ class SecurityController extends AbstractController
         ]);
     }
 
-    #[Route('/api/getrole', name: 'admin', methods: ['get'], format: 'json')]
     private function isAdmin(?User $currentuser): ?JsonResponse
     {
         if (!$currentuser) {

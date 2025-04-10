@@ -187,6 +187,18 @@ class UserController extends AbstractController
         $entityManager->flush();
         return new JsonResponse(['message' => 'Subscription removed'], Response::HTTP_OK);
     }
+
+    #[Route('/api/getrole', name: 'getrole', methods: ['get'], format: 'json')]
+    public function isAdmin(?User $currentuser): ?JsonResponse
+    {
+        if (!$currentuser) {
+            return $this->json(['error' => 'Unauthorized 1'], Response::HTTP_FORBIDDEN);
+        }
+        if (!in_array('ROLE_ADMIN', $currentuser->getRoles())) {
+            return $this->json(['error' => 'Unauthorized 2'], Response::HTTP_FORBIDDEN);
+        }
+        return null;
+    }
     
     #[Route('/user/{id}/is-following', name: 'check_is_following', methods: ['GET'])]
     public function checkIsFollowing(#[CurrentUser()] ?User $currentUser, int $id, EntityManagerInterface $entityManager): Response
@@ -219,5 +231,7 @@ class UserController extends AbstractController
 
         return new JsonResponse(['isFollowing' => $isFollowing], Response::HTTP_OK);
     }
+
+   
     
 }
