@@ -24,20 +24,20 @@ const router = createBrowserRouter([
         loader: PostLoader, 
       },
       {
-        path: `${import.meta.env.BASE_URL}/login`,
+        path: `${import.meta.env.BASE_URL}login`,
         element: <Login />,
       },
       {
-        path: `${import.meta.env.BASE_URL}/signup`,
+        path: `${import.meta.env.BASE_URL}signup`,
         element: <Signup />,
       },
       {
-        path: `${import.meta.env.BASE_URL}/profile`,
+        path: `${import.meta.env.BASE_URL}profile`,
         element: <Profil />,
         loader: UserLoader,
       },
       {
-        path : `${import.meta.env.BASE_URL}/otherProfil/:id`,
+        path : `${import.meta.env.BASE_URL}otherProfil/:id`,
         element: <OtherProfil />,
         loader: OtherUserLoader,
       }
