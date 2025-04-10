@@ -2,7 +2,7 @@
     RewriteEngine On
 
     # Définit la base de réécriture pour le dossier public
-    RewriteBase /~{USER_UNILIM}/SAE4.DWeb-DI.01/backend/public/
+    RewriteBase /~bounissou1/SAE401/CycleC/backend/public/
 
     # Redirige toutes les requêtes vers index.php si ce n'est pas un fichier ou un répertoire existant
     RewriteCond %{REQUEST_FILENAME} !-f
