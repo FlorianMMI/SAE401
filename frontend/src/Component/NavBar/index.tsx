@@ -1,27 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-function isAdmin() {
 
-
-    const token = localStorage.getItem('token');
-    const xhr = new XMLHttpRequest();
-    xhr.open("GET",  import.meta.env.VITE_URL + `/api/getrole`, false); // synchronous request
-    if (token) {
-      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-    }
-    xhr.setRequestHeader("Accept", "application/json");
-    xhr.send();
-
-    if (xhr.status === 200) {
-        const response = JSON.parse(xhr.responseText);
-        return response.user.roles.includes("ROLE_ADMIN");
-    }
-    
-    return false;
-
-}
-
+// isAdmin() ? import.meta.env.VITE_URL + `/admin` : 
 
 export default function NavBar() {
 
@@ -32,7 +13,7 @@ export default function NavBar() {
             <div className="text-base">
                 <Link
                     className="text-warmrasberry hover:text-warmrasberry-hover"
-                    to={isAdmin() ? import.meta.env.VITE_URL + `/admin` : "/"}
+                    to={import.meta.env.VITE_URL + `/`}
                 >
                     SocialName
                 </Link>
