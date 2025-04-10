@@ -6,7 +6,7 @@ function isAdmin() {
 
     const token = localStorage.getItem('token');
     const xhr = new XMLHttpRequest();
-    xhr.open("GET", "http://localhost:8080/api/getrole", false); // synchronous request
+    xhr.open("GET",  import.meta.env.VITE_URL + `/api/getrole`, false); // synchronous request
     if (token) {
       xhr.setRequestHeader("Authorization", `Bearer ${token}`);
     }
@@ -15,7 +15,7 @@ function isAdmin() {
 
     if (xhr.status === 200) {
         const response = JSON.parse(xhr.responseText);
-        return response.user.roles.includes("Role_admin");
+        return response.user.roles.includes("ROLE_ADMIN");
     }
     
     return false;
