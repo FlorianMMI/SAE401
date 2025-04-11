@@ -173,7 +173,7 @@ export default function Signup() {
         <button className="bg-warmrasberry text-white px-4 py-2 rounded" type="submit">
                         S'inscrire
         </button>
-          <Link to= {import.meta.env.BASE_URL + "/login"}>
+          <Link to= {import.meta.env.BASE_URL + "login"}>
             <Button type="button" variant="secondary">
               Déjà un compte ?
             </Button>

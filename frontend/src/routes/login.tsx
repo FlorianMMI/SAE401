@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Outlet, Link, redirect } from 'react-router-dom';
+import { Outlet, Link, redirect, Navigate } from 'react-router-dom';
 import Button from '../ui/button';
 
 export default function Login() {
@@ -20,7 +20,8 @@ export default function Login() {
         const data = await response.json();
         const token = data.token;
         localStorage.setItem('token', token);
-        return redirect('');
+        window.alert("Vous avez été connecté avec succès");
+        window.location.href = import.meta.env.BASE_URL;
       } else {
         console.error('Erreur lors de la connexion:', response.status);
       }
@@ -65,9 +66,11 @@ export default function Login() {
             />
           </div>
           <div className="flex items-center justify-between gap-4">
-            <button type="submit" className="px-4 py-3 bg-warmrasberry text-white rounded">
+        
+              <button type="submit" className="px-4 py-3 bg-warmrasberry text-white rounded">
               Connexion
-            </button>
+              </button>
+            
             <Link to= {import.meta.env.BASE_URL + "signup"}>
               <Button type="button" variant="secondary">
                 S'inscrire ?

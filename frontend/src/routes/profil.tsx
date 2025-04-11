@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useLoaderData, useNavigate } from 'react-router-dom';
+import { redirect, useLoaderData, useNavigate } from 'react-router-dom';
 import { fetchPostId, fetchuser } from '../lib/loaders';
 import ProfileHeader from '../Component/Profil_Header';
 import ProfilData from '../Component/Profil_Data';
@@ -45,6 +45,7 @@ export async function loader() {
     
     const userDetails = await fetchuser(userId);
     const userPosts = await fetchPostId(userId);
+
     
     return { datas: userDetails, posts: userPosts };
   } catch (error) {
@@ -135,9 +136,9 @@ export default function Profil() {
     
     const token = localStorage.getItem('token');
     if (!token) {
-      console.error("No authentication token found");
+      
       setIsSubmitting(false);
-      return;
+      return redirect('login');
     }
     
     try {
@@ -190,7 +191,7 @@ export default function Profil() {
       // Close the form and refresh the page to show updated data
       setShowForm(false);
       // Reload the current route to reflect changes
-      navigate(0);
+      window.location.href = import.meta.env.BASE_URL;
     } catch (error) {
       console.error('Error updating profile:', error);
     } finally {
@@ -202,8 +203,8 @@ export default function Profil() {
     <>
       <div className="flex flex-col items-center justify-center min-h-screen">
         <ProfileHeader 
-          avatar={user.avatar ? import.meta.env.VITE_URL + `/avatar/${user.avatar}` : Avatar}
-          images = {user.banniere ? import.meta.env.VITE_URL + `/banniere/${user.banniere}` : Avatar}
+          avatar={user.avatar ?  `/avatar/${user.avatar}` : Avatar}
+          images = {user.banniere ? `/banniere/${user.banniere}` : Avatar}
         />
         <ProfilData 
           username={user.username}
@@ -216,6 +217,14 @@ export default function Profil() {
           <Modification />
         </button>
 
+        {user.username === 'admin' && (
+          <button
+            onClick={() => navigate(import.meta.env.VITE_URL + '/admin')}
+            className="px-4 py-2 bg-red-500 text-white rounded my-4"
+          >
+            Panel
+          </button>
+        )}
         
         <div className="relative mb-6">
           <button
@@ -369,9 +378,9 @@ export default function Profil() {
             key={post.id}
             likes={post.likes}
             id={post.id}
-            media = {post.media ? import.meta.env.VITE_URL + `/uploads/${post.media}` : undefined}
+            media = {post.media ? `${post.media}` : undefined}
             user_id={post.user.id}
-            userImage={post.user.image ? import.meta.env.VITE_URL + `/avatar/${post.user.image}` : Avatar}
+            userImage={post.user.image ? `${post.user.image}` : Avatar}
             username={post.user.username}
             message={post.message}
             blockedby= {post.blockedby}
