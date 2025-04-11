@@ -1,11 +1,15 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Card_text from '../Component/Card_text';
 import Card_Post from '../Component/Card_Post';
-import { useLoaderData } from 'react-router-dom';
+import { redirect, useLoaderData } from 'react-router-dom';
 import Avatar from '../assets/Avatar.svg';
 import { fetchPost } from '../lib/loaders';
 
 export async function loader() {
+  let token = localStorage.getItem('token');
+  if (!token ) {
+    return redirect('login');
+  }
   const data = await fetchPost(1);
   return data.posts; // initial posts array (or null)
 }
