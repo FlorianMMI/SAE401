@@ -140,13 +140,13 @@ export default function OtherProfil() {
             }}
             className="bg-blue-500 text-white px-4 py-2 rounded"
           >
-            {isBlocked ? "Débloquer" : "Bloquer"}
+            {isBlocked ? "Unblocked" : "Block"}
           </button>
           <button
             onClick={toggleFollow}
             className="bg-thistlepink hover:bg-thistlepink-hover text-white px-4 py-2 rounded"
           >
-            {isFollowing ? "Ne plus suivre" : "Suivre"}
+            {isFollowing ? "Unfollow" : "Follow"}
           </button>
         </div>
         

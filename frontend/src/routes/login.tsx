@@ -39,7 +39,7 @@ export default function Login() {
           <div className="mb-6">
           {error && (
           <p className="mb-4 text-red-600">
-          Email ou mot de passe incorrect
+          Incorrect mail or password 
             </p>
           )}
             <label htmlFor="email" className="block text-warmrasberry mb-3">
@@ -55,7 +55,7 @@ export default function Login() {
           </div>
           <div className="mb-8">
             <label htmlFor="password" className="block text-warmrasberry mb-3">
-              Mot de passe
+              Password
             </label>
             <input
               id="password"
@@ -68,12 +68,12 @@ export default function Login() {
           <div className="flex items-center justify-between gap-4">
         
               <button type="submit" className="px-4 py-3 bg-warmrasberry text-white rounded">
-              Connexion
+              Login
               </button>
             
             <Link to= {import.meta.env.BASE_URL + "signup"}>
               <Button type="button" variant="secondary">
-                S'inscrire ?
+                Signup ?
               </Button>
             </Link>
           </div>

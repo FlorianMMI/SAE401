@@ -99,7 +99,8 @@ export default function Signup() {
       }
       // Vous pouvez gérer ici la redirection ou un message de succès
       console.log('Utilisateur inscrit avec succès');
-      return redirect('login')
+      window.alert("Vous avez été inscrit avec succès !");
+      window.location.href = import.meta.env.BASE_URL;
     } catch (error) {
       console.error(error);
       setSubmitError('Une erreur est survenue lors de l\'inscription.');
@@ -112,7 +113,7 @@ export default function Signup() {
       <form className="w-full max-w-lg" onSubmit={handleSubmit}>
         <div className="mb-6">
           <label htmlFor="username" className="block text-warmrasberry mb-3">
-            Nom d'utilisateur
+            Username
           </label>
           <input
             id="username"
@@ -139,7 +140,7 @@ export default function Signup() {
         </div>
         <div className="mb-6">
           <label htmlFor="password" className="block text-warmrasberry mb-3">
-            Mot de passe
+            Password
           </label>
           <input
             id="password"
@@ -171,11 +172,11 @@ export default function Signup() {
         )}
         <div className="flex items-center justify-between gap-4">
         <button className="bg-warmrasberry text-white px-4 py-2 rounded" type="submit">
-                        S'inscrire
+                        Signup ! 
         </button>
           <Link to= {import.meta.env.BASE_URL + "login"}>
             <Button type="button" variant="secondary">
-              Déjà un compte ?
+              Already have an account?
             </Button>
           </Link>
         </div>

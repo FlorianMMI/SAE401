@@ -148,7 +148,7 @@ export default function Home() {
             }}
             className="bg-warmrasberry hover:bg-thistlepink hover:bg-opacity-90 text-white py-2 px-4 rounded transition cursor-pointer"
             >
-            Rafraîchir
+            Refresh
             </button>
             <button
               onClick={async () => {
@@ -201,7 +201,7 @@ export default function Home() {
             checked={autoRefresh}
             onChange={(e) => setAutoRefresh(e.target.checked)}
           />
-          <span>Auto rafraîchissement ({refreshInterval / 1000}s)</span>
+          <span>Auto Refresh ({refreshInterval / 1000}s)</span>
         </label>
       </div>
       
@@ -221,7 +221,7 @@ export default function Home() {
           />
         ))}
         {loading && posts.length > 0 && <LoadingSpinner />}
-        {!hasMore && <p className="text-center">Aucun post supplémentaire.</p>}
+        {!hasMore && <p className="text-center">No more post.</p>}
       </div>
     </>
   );

@@ -208,9 +208,9 @@ export default function Profil() {
         />
         <ProfilData 
           username={user.username}
-          bio={user.bio || 'Aucune description'}
-          siteweb={user.siteweb || 'Aucun site web'}
-          localisation={user.localisation || 'Aucune localisation'}
+          bio={user.bio || 'No description'}
+          siteweb={user.siteweb || 'No website'}
+          localisation={user.localisation || 'Living somewhere'}
         />
 
         <button onClick={() => setShowForm(true)} className="">
@@ -231,13 +231,13 @@ export default function Profil() {
             onClick={() => setShowBlockedMenu(true)}
             className="px-4 py-2 bg-blue-500 text-white rounded"
           >
-            Utilisateurs bloqué
+            The blocked users
           </button>
 
           {showBlockedMenu && (
             <div className="absolute right-0 mt-2 w-64 bg-white border rounded shadow-lg z-10">
               <div className="flex justify-between items-center p-3 border-b">
-                <h3 className="text-lg font-semibold">Utilisateurs bloqué</h3>
+                <h3 className="text-lg font-semibold">Blocked Users</h3>
                 <button onClick={() => setShowBlockedMenu(false)} className="text-gray-600">
                   &times;
                 </button>
@@ -285,7 +285,7 @@ export default function Profil() {
                   </li>
                   ))
                 ) : (
-                  <li className="px-3 py-2">Aucun utilisateur bloqué</li>
+                  <li className="px-3 py-2">You blockend no one</li>
                 )}
               </ul>
             </div>
@@ -314,7 +314,7 @@ export default function Profil() {
                 ></textarea>
               </div>
               <div className="mb-4">
-                <label className="block mb-1">Site Web</label>
+                <label className="block mb-1">Website</label>
                 <input
                   type="url"
                   value={siteweb}
@@ -323,7 +323,7 @@ export default function Profil() {
                 />
               </div>
               <div className="mb-4">
-                <label className="block mb-1">Localisation</label>
+                <label className="block mb-1">Living Place</label>
                 <input
                   type="text"
                   value={localisation}
@@ -335,18 +335,18 @@ export default function Profil() {
                 <label className="block mb-1">Avatar</label>
                 <input type="file" accept="image/*" onChange={handleAvatarChange} />
                 {user.avatar && (
-                  <p className="text-xs mt-1">Avatar actuel: {user.avatar}</p>
+                  <p className="text-xs mt-1">Current Avatar : {user.avatar}</p>
                 )}
               </div>
               <div className="mb-4">
-                <label className="block mb-1">Bannière</label>
+                <label className="block mb-1">Banner</label>
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleBannerChange}
                 />
                 {user.banniere && (
-                  <p className="text-xs mt-1">Bannière actuelle: {user.banniere}</p>
+                  <p className="text-xs mt-1">Current Banner : {user.banniere}</p>
                 )}
               </div>
               <div className="flex justify-end">
@@ -356,14 +356,14 @@ export default function Profil() {
                   className="mr-2 text-gray-700"
                   disabled={isSubmitting}
                 >
-                  Annuler
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   className="text-white bg-warmrasberry px-4 py-1 rounded"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? 'Envoi en cours...' : 'Sauvegarder'}
+                  {isSubmitting ? 'Currently sending...' : 'Save'}
                 </button>
               </div>
             </form>
